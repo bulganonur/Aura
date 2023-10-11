@@ -7,6 +7,7 @@
 #include "AuraCharacter.generated.h"
 
 
+class AAuraPlayerState;
 /**
  * 
  */
@@ -23,4 +24,5 @@ public:
 
 private:
 	void InitAbilityActorInfo();
+	
 };
