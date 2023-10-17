@@ -2,52 +2,60 @@
 
 
 #include "Actor/AuraEffectActor.h"
-
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AbilitySystemInterface.h"
-#include "AbilitySystem/AuraAttributeSet.h"
-#include "Components/SphereComponent.h"
 
 AAuraEffectActor::AAuraEffectActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
-	SetRootComponent(StaticMesh);
-	
-	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComponent");
-	SphereComp->SetupAttachment(GetRootComponent());
+	SetRootComponent(CreateDefaultSubobject<USceneComponent>("SceneRoot"));
+	ActorLevel = 1.0f;
 }
 
-void AAuraEffectActor::BeginPlay()
+void AAuraEffectActor::ApplyEffectToActor(AActor* Actor, const TSubclassOf<UGameplayEffect> GameplayEffectClass) const
 {
-	Super::BeginPlay();
-	
+	UAbilitySystemComponent* ActorASC =  UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Actor);
+	if (!ActorASC) { return; }
+	check(GameplayEffectClass);
+
+	FGameplayEffectContextHandle GEContextHandle = ActorASC->MakeEffectContext();
+	GEContextHandle.AddSourceObject(this);
+	const FGameplayEffectSpecHandle GESpecHandle = ActorASC->MakeOutgoingSpec(GameplayEffectClass, ActorLevel, GEContextHandle);
+	ActorASC->ApplyGameplayEffectSpecToSelf(*GESpecHandle.Data.Get());
 }
 
-void AAuraEffectActor::PostInitializeComponents()
+void AAuraEffectActor::RemoveEffectFromActor(AActor* Actor, const TSubclassOf<UGameplayEffect> GameplayEffectClass)
 {
-	Super::PostInitializeComponents();
+	UAbilitySystemComponent* ActorASC =  UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Actor);
+	if (!ActorASC) { return; }
+	check(GameplayEffectClass);
 
-	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &AAuraEffectActor::OnBeginOverlap);
-	SphereComp->OnComponentEndOverlap.AddDynamic(this, &AAuraEffectActor::OnEndOverlap);
+	ActorASC->RemoveActiveGameplayEffectBySourceEffect(GameplayEffectClass, ActorASC, 1);
 }
 
-void AAuraEffectActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AAuraEffectActor::OnBeginOverlap(AActor* OtherActor)
 {
-	// TODO: Change this to apply GameplayEffect. For now, using const_cast.
-	if (IAbilitySystemInterface* ASCInterface = Cast<IAbilitySystemInterface>(OtherActor))
+	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnBeginOverlap)
 	{
-		const UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(ASCInterface->GetAbilitySystemComponent()->GetAttributeSet(UAuraAttributeSet::StaticClass()));
-		UAuraAttributeSet* MutableAuraAttributeSet = const_cast<UAuraAttributeSet*>(AuraAttributeSet);
-		MutableAuraAttributeSet->SetHealth(AuraAttributeSet->GetHealth() + 25.0f);
-		MutableAuraAttributeSet->SetMana(AuraAttributeSet->GetMana() - 25.0f);
-		Destroy();
+		ApplyEffectToActor(OtherActor, InstantGameplayEffectClass);
+	}
+
+	if (DurationEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnBeginOverlap)
+	{
+		ApplyEffectToActor(OtherActor, DurationGameplayEffectClass);
 	}
 }
 
-void AAuraEffectActor::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void AAuraEffectActor::OnEndOverlap(AActor* OtherActor)
 {
+	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
+	{
+		ApplyEffectToActor(OtherActor, InstantGameplayEffectClass);
+	}
+
+	if (DurationEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
+	{
+		ApplyEffectToActor(OtherActor, DurationGameplayEffectClass);
+	}
 }

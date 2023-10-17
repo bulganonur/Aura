@@ -2,6 +2,10 @@
 
 
 #include "AbilitySystem/AuraAttributeSet.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayEffectExtension.h"
+#include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -20,6 +24,58 @@ void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
+}
+
+void UAuraAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const
+{
+	Super::PreAttributeBaseChange(Attribute, NewValue);
+	
+	if (Attribute == GetHealthAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxHealth());
+		UE_LOG(LogTemp, Warning, TEXT("PREHealth: %f"), NewValue);
+	}
+	if (Attribute == GetManaAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxMana());
+		UE_LOG(LogTemp, Warning, TEXT("PREMana: %f"), NewValue);
+	}
+}
+
+void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+	
+	FEffectProperties Props;
+	SetEffectProperties(Data, Props);
+}
+
+void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props)
+{
+	// Source(Data.EffectSpec): Causer of the effect, Target(Data.Target): Owner of the AttributeSet(Data.EvaluatedData)
+
+	Props.GEContextHandle = Data.EffectSpec.GetContext();
+
+	// Source (Data.EffectSpec)
+	Props.SourceASC = Props.GEContextHandle.GetOriginalInstigatorAbilitySystemComponent();
+	if (Props.SourceASC)
+	{
+		Props.SourceAvatar = Props.SourceASC->GetAvatarActor();
+		Props.SourceController = Props.SourceASC->AbilityActorInfo->PlayerController.Get();
+		if (Props.SourceAvatar)
+		{
+			Props.SourceCharacter = Cast<ACharacter>(Props.SourceAvatar);
+		}
+	}
+
+	// Target (Data.Target)
+	Props.TargetAvatar = Data.Target.GetAvatarActor();
+	Props.TargetASC = &Data.Target;
+	Props.TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
+	if (Props.TargetAvatar)
+	{
+		Props.TargetCharacter = Cast<ACharacter>(Props.TargetAvatar);
+	}
 }
 
 void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const

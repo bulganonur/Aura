@@ -16,8 +16,18 @@ struct FWidgetControllerParams
 	GENERATED_BODY()
 
 	FWidgetControllerParams() {}
-	FWidgetControllerParams(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
-		: PlayerController(PC), PlayerState(PS), AbilitySystemComponent(ASC), AttributeSet(AS) {}
+	FWidgetControllerParams
+	(
+		APlayerController* PC,
+		APlayerState* PS,
+		UAbilitySystemComponent* ASC,
+		UAttributeSet* AS
+	) :
+		PlayerController(PC),
+		PlayerState(PS),
+		AbilitySystemComponent(ASC),
+		AttributeSet(AS) {}
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<APlayerController> PlayerController = nullptr;
