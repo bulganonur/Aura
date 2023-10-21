@@ -6,7 +6,29 @@
 #include "UI/WidgetController/AuraWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangeSignature, float, Value);
+class UAuraUserWidget;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAttributeChangeSignature, float, OldValue, float, NewValue);
+
+USTRUCT(BlueprintType)
+struct FUIWidgetRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag MessageTag = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText Message = FText();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UAuraUserWidget> MessageWidget;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UTexture2D> Image = nullptr;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, const FUIWidgetRow&, WidgetRow);
 
 /**
  * 
@@ -32,9 +54,21 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS | Attributes")
 	FOnAttributeChangeSignature OnMaxManaChange;
 
+	UPROPERTY(BlueprintAssignable, Category = "GAS | Messages")
+	FMessageWidgetRowSignature MessageWidgetRowDelegate;
+	
 protected:
-	void OnHealthChangeCallback(const FOnAttributeChangeData& Data) const;
-	void OnMaxHealthChangeCallback(const FOnAttributeChangeData& Data) const;
-	void OnManaChangeCallback(const FOnAttributeChangeData& Data) const;
-	void OnMaxManaChangeCallback(const FOnAttributeChangeData& Data) const;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
+	TObjectPtr<UDataTable> MessageWidgetDataTable;
+
+	template<typename T>
+	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
 };
+
+template <typename T>
+T* UOverlayWidgetController::GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag)
+{
+	return DataTable->FindRow<T>(Tag.GetTagName(), TEXT(""));
+	
+}
