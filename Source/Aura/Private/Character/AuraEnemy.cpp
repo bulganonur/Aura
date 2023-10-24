@@ -18,6 +18,8 @@ AAuraEnemy::AAuraEnemy()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	
 	AttributeSet = CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
+
+	Level = 1;
 }
 
 void AAuraEnemy::BeginPlay()
@@ -42,4 +44,9 @@ void AAuraEnemy::UnHighlightActor()
 {
 	GetMesh()->SetRenderCustomDepth(false);
 	Weapon->SetRenderCustomDepth(false);
+}
+
+int32 AAuraEnemy::GetAuraLevel()
+{
+	return Level;
 }

@@ -3,7 +3,8 @@
 
 #include "Character/AuraCharacterBase.h"
 
-// Sets default values
+#include "AbilitySystemComponent.h"
+
 AAuraCharacterBase::AAuraCharacterBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -14,18 +15,42 @@ AAuraCharacterBase::AAuraCharacterBase()
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
-{
-	return AbilitySystemComponent;
-}
-
-// Called when the game starts or when spawned
 void AAuraCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
+UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
+UAttributeSet* AAuraCharacterBase::GetAttributeSet() const
+{
+	return AttributeSet;
+}
+
 void AAuraCharacterBase::InitAbilityActorInfo()
 {
+	// Defined in derived classes
+}
+
+void AAuraCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
+{
+	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+	{
+		checkf(GameplayEffectClass, TEXT("GameplayEffectClass is not set! -> BP_AuraCharacter"));
+		FGameplayEffectContextHandle GEContextHandle = ASC->MakeEffectContext();
+		GEContextHandle.AddSourceObject(this);
+		const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level, GEContextHandle);
+		ASC->ApplyGameplayEffectSpecToSelf(*GESpecHandle.Data.Get());
+	}
+}
+
+void AAuraCharacterBase::InitializeDefaultAttributes() const
+{
+	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.0f);
+	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.0f);
+	ApplyEffectToSelf(DefaultVitalAttributes, 1.0f);
 }
 

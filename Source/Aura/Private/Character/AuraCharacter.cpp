@@ -2,7 +2,6 @@
 
 
 #include "Character/AuraCharacter.h"
-
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -38,23 +37,35 @@ void AAuraCharacter::OnRep_PlayerState()
 	InitAbilityActorInfo();
 }
 
+int32 AAuraCharacter::GetAuraLevel()
+{
+	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	return AuraPlayerState->GetAuraLevel();
+}
+
 void AAuraCharacter::InitAbilityActorInfo()
 {
-	if (AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>())
-	{
-		UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AuraPlayerState->GetAbilitySystemComponent());
-		AuraASC->InitAbilityActorInfo(AuraPlayerState, this);
-		AuraASC->PostInitAbilityActorInfo();
-		
-		AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
-		AttributeSet = AuraPlayerState->GetAttributeSet();
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
 
-		if (AAuraPlayerController* AuraPlayerController = GetController<AAuraPlayerController>())
-		{
-			if (AAuraHUD* AuraHUD = AuraPlayerController->GetHUD<AAuraHUD>())
-			{
-				AuraHUD->InitOverlay(AuraPlayerController, AuraPlayerState, AbilitySystemComponent, AttributeSet);
-			}
-		}
-	}
+	// Initialize Ability Actor Info and Call PostInit
+	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AuraPlayerState->GetAbilitySystemComponent());
+	AuraASC->InitAbilityActorInfo(AuraPlayerState, this);
+	AuraASC->PostInitAbilityActorInfo();
+
+	// Set ASC & Attribute Set
+	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
+	AttributeSet = AuraPlayerState->GetAttributeSet();
+
+	// Initialize Widget Overlay
+	AAuraPlayerController* AuraPlayerController = GetController<AAuraPlayerController>();
+	check(AuraPlayerController);
+	AAuraHUD* AuraHUD = AuraPlayerController->GetHUD<AAuraHUD>();
+	check(AuraHUD);
+	AuraHUD->InitOverlay(AuraPlayerController, AuraPlayerState, AbilitySystemComponent, AttributeSet);
+
+	// Initialize Default Attributes
+	InitializeDefaultAttributes();
 }

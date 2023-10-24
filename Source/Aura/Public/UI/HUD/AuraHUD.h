@@ -27,8 +27,6 @@ public:
 
 	void InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS);
 
-	
-
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UAuraUserWidget> OverlayWidgetClass;
