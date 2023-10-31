@@ -2,8 +2,8 @@
 
 
 #include "Character/AuraCharacterBase.h"
-
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 
 AAuraCharacterBase::AAuraCharacterBase()
 {
@@ -30,6 +30,11 @@ UAttributeSet* AAuraCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
+FVector AAuraCharacterBase::GetCombatSocketLocation()
+{
+	return Weapon->GetSocketLocation(WeaponTipSocketName);
+}
+
 void AAuraCharacterBase::InitAbilityActorInfo()
 {
 	// Defined in derived classes
@@ -37,14 +42,12 @@ void AAuraCharacterBase::InitAbilityActorInfo()
 
 void AAuraCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
 {
-	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
-	{
-		checkf(GameplayEffectClass, TEXT("GameplayEffectClass is not set! -> BP_AuraCharacter"));
-		FGameplayEffectContextHandle GEContextHandle = ASC->MakeEffectContext();
-		GEContextHandle.AddSourceObject(this);
-		const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level, GEContextHandle);
-		ASC->ApplyGameplayEffectSpecToSelf(*GESpecHandle.Data.Get());
-	}
+	checkf(AbilitySystemComponent, TEXT("AbilitySystemComponent is not set!"));
+	checkf(GameplayEffectClass, TEXT("GameplayEffectClass is not set! -> BP_AuraCharacter"));
+	FGameplayEffectContextHandle GEContextHandle = AbilitySystemComponent->MakeEffectContext();
+	GEContextHandle.AddSourceObject(this);
+	const FGameplayEffectSpecHandle GESpecHandle = AbilitySystemComponent->MakeOutgoingSpec(GameplayEffectClass, Level, GEContextHandle);
+	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*GESpecHandle.Data.Get());
 }
 
 void AAuraCharacterBase::InitializeDefaultAttributes() const
@@ -52,5 +55,13 @@ void AAuraCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.0f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.0f);
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.0f);
+}
+
+void AAuraCharacterBase::AddCharacterAbilities() const
+{
+	if (!HasAuthority()) { return; }
+	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	/*UE_LOG(LogTemp, Warning, TEXT("AuraASC: %s"), *AuraASC->GetName());*/
+	AuraASC->AddCharacterAbilities(StartupAbilities);
 }
 

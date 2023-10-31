@@ -46,6 +46,19 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_ManaCrystal);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_ManaPotion);
 
 /**
+ * INPUT
+ */
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_LMB);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_RMB);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_1);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_2);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_3);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_4);
+
+
+
+/**
  * AuraGameplayTags
  *
  * Singleton containing native GameplayTags
@@ -53,9 +66,8 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_ManaPotion);
  */
 struct FAuraGameplayTags
 {
-public:
+
  static const FAuraGameplayTags& Get();
- 
  static void InitializeNativeGameplayTags();
 
  FGameplayTagContainer AuraAllTagsContainer;
@@ -63,9 +75,6 @@ public:
  FGameplayTagContainer AttributePrimaryContainer;
  FGameplayTagContainer AttributeSecondaryContainer;
 
-protected:
-
- 
 private:
  static FAuraGameplayTags AuraGameplayTags;
  

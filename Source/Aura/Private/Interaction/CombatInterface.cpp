@@ -8,3 +8,8 @@ int32 ICombatInterface::GetAuraLevel()
 {
 	return 0;
 }
+
+FVector ICombatInterface::GetCombatSocketLocation()
+{
+	return FVector();
+}

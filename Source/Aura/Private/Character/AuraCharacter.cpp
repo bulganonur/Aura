@@ -27,6 +27,8 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 
 	// Init ability actor info for the Server
 	InitAbilityActorInfo();
+
+	AddCharacterAbilities();
 }
 
 void AAuraCharacter::OnRep_PlayerState()
@@ -50,21 +52,23 @@ void AAuraCharacter::InitAbilityActorInfo()
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 
-	// Initialize Ability Actor Info and Call PostInit
-	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AuraPlayerState->GetAbilitySystemComponent());
-	AuraASC->InitAbilityActorInfo(AuraPlayerState, this);
-	AuraASC->PostInitAbilityActorInfo();
-
 	// Set ASC & Attribute Set
 	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
 	AttributeSet = AuraPlayerState->GetAttributeSet();
 
+	// Initialize Ability Actor Info and Call PostInit
+	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AuraPlayerState->GetAbilitySystemComponent());
+	AuraASC->InitAbilityActorInfo(AuraPlayerState, this);
+	AuraASC->PostInitAbilityActorInfo();
+	
 	// Initialize Widget Overlay
-	AAuraPlayerController* AuraPlayerController = GetController<AAuraPlayerController>();
-	check(AuraPlayerController);
-	AAuraHUD* AuraHUD = AuraPlayerController->GetHUD<AAuraHUD>();
-	check(AuraHUD);
-	AuraHUD->InitOverlay(AuraPlayerController, AuraPlayerState, AbilitySystemComponent, AttributeSet);
+	if (AAuraPlayerController* AuraPlayerController = GetController<AAuraPlayerController>())
+	{
+		if (AAuraHUD* AuraHUD = AuraPlayerController->GetHUD<AAuraHUD>())
+		{
+			AuraHUD->InitOverlay(AuraPlayerController, AuraPlayerState, AbilitySystemComponent, AttributeSet);
+		}
+	}
 
 	// Initialize Default Attributes
 	InitializeDefaultAttributes();
