@@ -8,6 +8,7 @@
 
 
 class AAuraPlayerState;
+
 /**
  * 
  */
@@ -30,4 +31,5 @@ public:
 
 protected:
 	virtual void InitAbilityActorInfo() override;
+	
 };

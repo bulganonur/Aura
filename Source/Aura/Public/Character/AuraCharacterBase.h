@@ -38,8 +38,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	FName WeaponTipSocketName;
 
+	//~ Begin Combat Interface
 	virtual FVector GetCombatSocketLocation() override;
-
+	//~ End Combat Interface
+	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
@@ -62,4 +64,5 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+	
 };

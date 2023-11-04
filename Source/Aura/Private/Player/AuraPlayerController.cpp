@@ -24,6 +24,8 @@ AAuraPlayerController::AAuraPlayerController()
 	AutoRunAcceptanceRadius = 50.f;
 	bTargetingEnemy = false;
 
+	bLShiftKeyPressed = false;
+	
 	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
 }
 
@@ -61,7 +63,8 @@ void AAuraPlayerController::SetupInputComponent()
 	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 
 	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
-
+	AuraInputComponent->BindAction(LShiftAction, ETriggerEvent::Started, this, &ThisClass::LShiftPressed);
+	AuraInputComponent->BindAction(LShiftAction, ETriggerEvent::Completed, this, &ThisClass::LShiftReleased);
 	AuraInputComponent->BindAbilityActions(AuraInputAsset, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 }
 
@@ -77,6 +80,16 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(ForwardVector, InputAxisValue.Y);
 		ControlledPawn->AddMovementInput(RightVector, InputAxisValue.X);
 	}
+}
+
+void AAuraPlayerController::LShiftPressed()
+{
+	bLShiftKeyPressed = true;
+}
+
+void AAuraPlayerController::LShiftReleased()
+{
+	bLShiftKeyPressed = false;
 }
 
 void AAuraPlayerController::CursorTrace()
@@ -137,17 +150,15 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag Tag)
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
 {
-	if (!Tag.MatchesTagExact(InputTag_LMB) && GetAbilitySystemComponent())
+	if (!Tag.MatchesTagExact(InputTag_LMB))
 	{
 		GetAbilitySystemComponent()->AbilityInputTagReleased(Tag);
 		return;
 	}
 
-	if (bTargetingEnemy && GetAbilitySystemComponent())
-	{
-		GetAbilitySystemComponent()->AbilityInputTagReleased(Tag);
-	}
-	else
+	GetAbilitySystemComponent()->AbilityInputTagReleased(Tag);
+	
+	if (!bTargetingEnemy && !bLShiftKeyPressed)
 	{
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
@@ -179,18 +190,19 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
 		FollowTime = 0.0f;
 		bTargetingEnemy = false;
 	}
-	
 }
 
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag Tag)
 {
-	if (!Tag.MatchesTagExact(InputTag_LMB) && GetAbilitySystemComponent())
+	if (!GetAbilitySystemComponent()) { return; }
+	
+	if (!Tag.MatchesTagExact(InputTag_LMB))
 	{
 		GetAbilitySystemComponent()->AbilityInputTagHeld(Tag);
 		return;
 	}
 
-	if (bTargetingEnemy && GetAbilitySystemComponent())
+	if (bTargetingEnemy || bLShiftKeyPressed)
 	{
 		GetAbilitySystemComponent()->AbilityInputTagHeld(Tag);
 	}

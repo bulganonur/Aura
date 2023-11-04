@@ -42,6 +42,15 @@ private:
 	TObjectPtr<UInputAction> MoveAction;
 	
 	void Move(const FInputActionValue& InputActionValue);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> LShiftAction;
+
+	void LShiftPressed();
+	void LShiftReleased();
+
+	bool bLShiftKeyPressed;
+	
 	void CursorTrace();
 
 	FHitResult CursorHit;

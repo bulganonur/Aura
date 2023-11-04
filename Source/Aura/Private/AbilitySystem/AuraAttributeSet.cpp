@@ -73,9 +73,11 @@ void UAuraAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribu
 void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
-	
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
+
+	UE_LOG(LogTemp, Warning, TEXT("Health Changed On: %s, POSTHealth: %f"), *Props.TargetCharacter.GetName(), GetHealth());
+	
 }
 
 void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, OUT FEffectProperties& Props)

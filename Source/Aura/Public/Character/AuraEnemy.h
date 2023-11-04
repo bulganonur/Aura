@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "Character/AuraCharacterBase.h"
 #include "Interaction/EnemyInterface.h"
+#include "UI/WidgetController/OverlayWidgetController.h"
 #include "AuraEnemy.generated.h"
 
+class UWidgetComponent;
 /**
  * 
  */
@@ -35,6 +37,17 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
 
+	UPROPERTY(BlueprintAssignable, Category = "GAS | Attributes")
+	FOnAttributeChangeSignature OnHealthChange;
+
+	UPROPERTY(BlueprintAssignable, Category = "GAS | Attributes")
+	FOnAttributeChangeSignature OnMaxHealthChange;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	int32 Level;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TObjectPtr<UWidgetComponent> WidgetComp;
+	
+	
 };

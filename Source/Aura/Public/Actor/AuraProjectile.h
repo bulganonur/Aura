@@ -3,11 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "GameFramework/Actor.h"
 #include "AuraProjectile.generated.h"
 
 class UProjectileMovementComponent;
 class USphereComponent;
+class UNiagaraSystem;
+
 
 UCLASS()
 class AURA_API AAuraProjectile : public AActor
@@ -18,10 +21,14 @@ public:
 	
 	AAuraProjectile();
 
+	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
+	FGameplayEffectSpecHandle DamageEffectSpecHandle;
+
 protected:
 	
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
+	virtual void Destroyed() override;
 
 	UFUNCTION()
 	void OnSphereCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
@@ -31,6 +38,23 @@ protected:
 
 private:
 
+	UPROPERTY(EditDefaultsOnly)
+	float LifeSpan;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Components")
 	TObjectPtr<USphereComponent> SphereComp;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UNiagaraSystem> Impact_VFX;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> Impact_SFX;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> Cast_SFX;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UAudioComponent> OnAir_SFX;
+
+	bool bHasServerHitHappened;
 };
