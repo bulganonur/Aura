@@ -40,6 +40,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& TargetLocation)
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
 		);
 
+		// add SourceObject to the ContextHandle ?
 		const UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
 		const FGameplayEffectContextHandle GEContextHandle = SourceASC->MakeEffectContext();
 		const FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), GEContextHandle);

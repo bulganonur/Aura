@@ -8,6 +8,7 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AuraEnemy.generated.h"
 
+enum class ECharacterClass : uint8;
 class UWidgetComponent;
 /**
  * 
@@ -18,6 +19,7 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
 	GENERATED_BODY()
 
 public:
+	
 	AAuraEnemy();
 
 	//~ Begin Enemy Interface
@@ -34,9 +36,11 @@ public:
 	//~ End Combat Interface
 
 protected:
+	
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
-
+	virtual void InitializeDefaultAttributes() const override;
+	
 	UPROPERTY(BlueprintAssignable, Category = "GAS | Attributes")
 	FOnAttributeChangeSignature OnHealthChange;
 
@@ -46,8 +50,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	int32 Level;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character Class Defaults")
+	ECharacterClass CharacterClass;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<UWidgetComponent> WidgetComp;
-	
-	
+
 };
