@@ -25,7 +25,7 @@ public:
 
 	//~ Begin Combat Interface
 	
-	virtual int32 GetAuraLevel() override;
+	virtual int32 GetAuraLevel() const override;
 	
 	//~ End Combat Interface
 

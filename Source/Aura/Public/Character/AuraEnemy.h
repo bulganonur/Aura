@@ -31,10 +31,20 @@ public:
 
 	//~ Begin Combat Interface
 
-	virtual int32 GetAuraLevel() override;
+	virtual int32 GetAuraLevel() const override;
+	virtual void Die() override;
 	
 	//~ End Combat Interface
 
+	UFUNCTION()
+	void OnHitReactTagChange(const FGameplayTag CallbackTag, int32 NewCount);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	bool bHitReacting;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed;
+	
 protected:
 	
 	virtual void BeginPlay() override;
@@ -55,5 +65,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<UWidgetComponent> WidgetComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	float AfterDeathLifeSpan;
 
 };

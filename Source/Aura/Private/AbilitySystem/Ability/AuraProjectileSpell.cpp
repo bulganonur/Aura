@@ -2,7 +2,9 @@
 
 
 #include "AbilitySystem/Ability/AuraProjectileSpell.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "Actor/AuraProjectile.h"
 #include "Interaction/CombatInterface.h"
 
@@ -44,8 +46,9 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& TargetLocation)
 		const UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
 		const FGameplayEffectContextHandle GEContextHandle = SourceASC->MakeEffectContext();
 		const FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), GEContextHandle);
+
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GESpecHandle, Ability_Damage, AbilityDamage.GetValueAtLevel(GetAbilityLevel()));
 		Projectile->DamageEffectSpecHandle = GESpecHandle;
-		
 		Projectile->FinishSpawning(SpawnTransform);
 	}
 }

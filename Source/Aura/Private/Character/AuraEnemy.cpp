@@ -2,11 +2,13 @@
 
 
 #include "Character/AuraEnemy.h"
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Aura/Aura.h"
 #include "Components/WidgetComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "UI/Widget/AuraUserWidget.h"
 
 AAuraEnemy::AAuraEnemy()
@@ -25,12 +27,17 @@ AAuraEnemy::AAuraEnemy()
 	WidgetComp->SetupAttachment(GetRootComponent());
 	
 	Level = 1;
+	bHitReacting = false;
+	BaseWalkSpeed = 250.0f;
+	AfterDeathLifeSpan = 5.0f;
 }
 
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
+	UAuraAbilitySystemLibrary::InitializeStartupAbilities(this, AbilitySystemComponent);
 
 	// set progressbar's widget controller as this
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(WidgetComp->GetUserWidgetObject()))
@@ -55,6 +62,8 @@ void AAuraEnemy::BeginPlay()
 		// broadcast initial values
 		OnHealthChange.Broadcast(AuraAttributeSet->GetHealth(), AuraAttributeSet->GetHealth());
 		OnMaxHealthChange.Broadcast(AuraAttributeSet->GetMaxHealth(), AuraAttributeSet->GetMaxHealth());
+
+		AbilitySystemComponent->RegisterGameplayTagEvent(Effect_HitReact, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::OnHitReactTagChange);
 	}
 }
 
@@ -83,7 +92,19 @@ void AAuraEnemy::UnHighlightActor()
 	Weapon->SetRenderCustomDepth(false);
 }
 
-int32 AAuraEnemy::GetAuraLevel()
+int32 AAuraEnemy::GetAuraLevel() const
 {
 	return Level;
+}
+
+void AAuraEnemy::Die()
+{
+	SetLifeSpan(AfterDeathLifeSpan);
+	Super::Die();
+}
+
+void AAuraEnemy::OnHitReactTagChange(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bHitReacting = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.0f : BaseWalkSpeed;
 }

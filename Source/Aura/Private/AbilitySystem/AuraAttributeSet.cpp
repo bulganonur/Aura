@@ -7,7 +7,9 @@
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
+#include "Interaction/CombatInterface.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/AuraPlayerController.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -77,6 +79,37 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	SetEffectProperties(Data, Props);
 
 	UE_LOG(LogTemp, Warning, TEXT("Health Changed On: %s, POSTHealth: %f"), *Props.TargetCharacter.GetName(), GetHealth());
+
+	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+	{
+		const float LocalIncomingDamage = GetIncomingDamage();
+		SetIncomingDamage(0.0f);
+
+		if (LocalIncomingDamage > 0.0f)
+		{
+			const float NewHealth = GetHealth() - LocalIncomingDamage;
+			SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
+
+			const bool bFatalDamage = NewHealth <= 0.0f;
+			if (bFatalDamage)
+			{
+				if (ICombatInterface* EffectedTarget = Cast<ICombatInterface>(Props.TargetAvatar))
+				{
+					EffectedTarget->Die();
+				}
+			}
+			else
+			{
+				FGameplayTagContainer TagContainer = FGameplayTagContainer(Effect_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
+
+			if (AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(Props.SourceController))
+			{
+				AuraPC->ClientShowDamageWidget(Props.TargetAvatar, LocalIncomingDamage);
+			}
+		}
+	}
 	
 }
 
