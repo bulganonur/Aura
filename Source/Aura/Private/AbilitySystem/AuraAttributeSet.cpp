@@ -2,10 +2,11 @@
 
 
 #include "AbilitySystem/AuraAttributeSet.h"
-
-#include "AbilitySystemBlueprintLibrary.h"
+/*#include "AbilitySystemBlueprintLibrary.h"*/
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
+/*#include "AbilitySystem/AuraAbilitySystemComponent.h"*/
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
 #include "Net/UnrealNetwork.h"
@@ -100,17 +101,18 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			}
 			else
 			{
-				FGameplayTagContainer TagContainer = FGameplayTagContainer(Effect_HitReact);
+				const FGameplayTagContainer TagContainer = FGameplayTagContainer(Effect_HitReact);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
 
 			if (AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(Props.SourceController))
 			{
-				AuraPC->ClientShowDamageWidget(Props.TargetAvatar, LocalIncomingDamage);
+				const bool bBlock = UAuraAbilitySystemLibrary::IsBlockedHit(Props.GEContextHandle);
+				const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.GEContextHandle);
+				AuraPC->ClientShowDamageWidget(Props.TargetAvatar, LocalIncomingDamage, bBlock, bCriticalHit);
 			}
 		}
 	}
-	
 }
 
 void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, OUT FEffectProperties& Props)

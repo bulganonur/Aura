@@ -62,6 +62,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// Get GameplayEffectSpec
 	const FGameplayEffectSpec& GESpec = ExecutionParams.GetOwningSpec();
+
+	// Get GameplayEffectContextHandle
+	FGameplayEffectContextHandle GEContextHandle = GESpec.GetContext();
 	
 	// Gather Tags from Source and Target
 	const FGameplayTagContainer* SourceTags = GESpec.CapturedSourceTags.GetAggregatedTags();
@@ -71,8 +74,16 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
-	// Get Damage Set by Caller Magnitude
-	float Damage = GESpec.GetSetByCallerMagnitude(Ability_Damage);
+	// Actual damage of the effect
+	float Damage = 0.0f;
+	
+	// Get Damage Set by Caller Magnitude - get all damage types and add their values to Damage
+	for (const FGameplayTag& Tag : FAuraGameplayTags::Get().DamageTypes)
+	{
+		const float DamageTypeValue = GESpec.GetSetByCallerMagnitude(Tag);
+		Damage += DamageTypeValue;
+	}
+	
 	
 	// Get target's BlockChance magnitude
 	float TargetBlockChance;
@@ -80,8 +91,12 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	TargetBlockChance = FMath::Max<float>(TargetBlockChance, 0.0f);
 	
 	// Check if the hit was a block, if so halve the Damage
-	Damage = FMath::RandRange(1.0f, 100.0f) <= TargetBlockChance ? Damage * 0.5 : Damage;
+	const bool bBlocked = FMath::RandRange(1.0f, 100.0f) <= TargetBlockChance;
+	Damage = bBlocked ? Damage * 0.5 : Damage;
 
+	// Set IsBlockedHit
+	UAuraAbilitySystemLibrary::SetIsBlockedHit(GEContextHandle, bBlocked);
+	
 	// Get target's Armor Magnitude
 	float TargetArmor;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorDef, EvaluationParameters, OUT TargetArmor);
@@ -131,7 +146,11 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const float EffectiveCriticalHitChance = SourceCriticalHitChance * (100.0f - TargetCriticalHitResistance * CriticalHitResistanceCoefficient) / 100.0f;
 
 	// Double damage plus bonus (CriticalHitDamage), if critical hit
-	Damage = FMath::RandRange(1.0f, 100.0f) <= EffectiveCriticalHitChance ? Damage * 2.0f + SourceCriticalHitDamage : Damage;
+	bool bCriticalHit = FMath::RandRange(1.0f, 100.0f) <= EffectiveCriticalHitChance;
+	Damage = bCriticalHit ? Damage * 2.0f + SourceCriticalHitDamage : Damage;
+
+	//Set IsCriticalHit
+	UAuraAbilitySystemLibrary::SetIsCriticalHit(GEContextHandle, bCriticalHit);
 	
 	const FGameplayModifierEvaluatedData EvaluatedData(UAuraAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);

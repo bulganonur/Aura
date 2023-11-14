@@ -56,13 +56,14 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_2);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_3);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_4);
 
-/*
- * ABILITY
+/**
+ * DAMAGE TYPES
  */
 
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Damage);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_DefaultType);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Fire);
 
-/*
+/**
  * EFFECTS
  */
 
@@ -81,10 +82,8 @@ struct FAuraGameplayTags
  static void InitializeNativeGameplayTags();
 
  FGameplayTagContainer AuraAllTagsContainer;
- FGameplayTagContainer AttributeVitalContainer;
- FGameplayTagContainer AttributePrimaryContainer;
- FGameplayTagContainer AttributeSecondaryContainer;
-
+ TArray<FGameplayTag> DamageTypes;
+ 
 private:
  static FAuraGameplayTags AuraGameplayTags;
  

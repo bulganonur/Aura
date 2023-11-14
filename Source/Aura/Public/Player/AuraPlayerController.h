@@ -30,7 +30,7 @@ public:
 	virtual void PlayerTick(float DeltaTime) override;
 
 	UFUNCTION(Client, Reliable)
-	void ClientShowDamageWidget(AActor* TargetActor, float DamageValue);
+	void ClientShowDamageWidget(AActor* TargetActor, float DamageValue, bool bBlockedHit, bool bCriticalHit);
 
 protected:
 

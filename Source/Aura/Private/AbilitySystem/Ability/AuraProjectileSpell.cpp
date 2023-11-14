@@ -41,13 +41,19 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& TargetLocation)
 			Cast<APawn>(GetAvatarActorFromActorInfo()),
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
 		);
-
-		// add SourceObject to the ContextHandle ?
+		
 		const UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
-		const FGameplayEffectContextHandle GEContextHandle = SourceASC->MakeEffectContext();
+		FGameplayEffectContextHandle GEContextHandle = SourceASC->MakeEffectContext();
+		GEContextHandle.SetAbility(this);
+		GEContextHandle.AddSourceObject(Projectile);
 		const FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), GEContextHandle);
 
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GESpecHandle, Ability_Damage, AbilityDamage.GetValueAtLevel(GetAbilityLevel()));
+		for (const auto& Map : DamageTypes)
+		{
+			const float ScaledDamage = Map.Value.GetValueAtLevel(GetAbilityLevel());
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GESpecHandle, Map.Key, ScaledDamage);
+		}
+		
 		Projectile->DamageEffectSpecHandle = GESpecHandle;
 		Projectile->FinishSpawning(SpawnTransform);
 	}

@@ -40,8 +40,9 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_2, "InputTag.2", "Input Tag for 2 key");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_3, "InputTag.3", "Input Tag for 3 key");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_4, "InputTag.4", "Input Tag for 4 key");
 
-// Ability
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Damage, "Ability.Damage", "Ability Damage Tag. Usually for Set by Caller Magnitude");
+// Damage Types
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage_DefaultType, "Damage.DefaultType", "Default Damage Type Tag. Usually for Set by Caller Magnitude");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage_Fire, "Damage.Fire", "Fire damage type");
 
 // Effects
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Effect_HitReact, "Effect.HitReact", "Tag Granted for hit reaction via GameplayEffect");
@@ -74,6 +75,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	AuraGameplayTags.AuraAllTagsContainer.AddTag(Message_HealthPotion);
 	AuraGameplayTags.AuraAllTagsContainer.AddTag(Message_ManaCrystal);
 	AuraGameplayTags.AuraAllTagsContainer.AddTag(Message_ManaPotion);
+
+	// DamageTypes Array
+
+	AuraGameplayTags.DamageTypes.Add(Damage_DefaultType);
+	AuraGameplayTags.DamageTypes.Add(Damage_Fire);
 }
 
 const FAuraGameplayTags& FAuraGameplayTags::Get()
