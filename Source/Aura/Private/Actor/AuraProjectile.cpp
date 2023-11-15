@@ -49,6 +49,7 @@ void AAuraProjectile::PostInitializeComponents()
 void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	SetLifeSpan(LifeSpan);
 	UGameplayStatics::PlaySoundAtLocation(this, Cast_SFX, GetActorLocation());
 }
@@ -68,10 +69,16 @@ void AAuraProjectile::Destroyed()
 void AAuraProjectile::OnSphereCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UGameplayStatics::PlaySoundAtLocation(this, Impact_SFX, GetActorLocation());
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, Impact_VFX, GetActorLocation());
+	if (OtherActor == GetInstigator())
+	{
+		return;
+	}
+	if (!bHasServerHitHappened)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, Impact_SFX, GetActorLocation());
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, Impact_VFX, GetActorLocation());
+	}
 	
-
 	if (HasAuthority()) // for server, carry on. everything happens as expected
 	{
 		UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetInstigator());

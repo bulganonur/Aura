@@ -37,6 +37,15 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MaxHealth);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MaxMana);
 
 /**
+ * SECONDARY ATTRIBUTES (RESISTANCE ATTRIBUTES)
+ */
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_ArcaneResistance);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_FireResistance);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_LightningResistance);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_PhysicalResistance);
+
+/**
  * MESSAGES
  */
 
@@ -62,6 +71,9 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_4);
 
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_DefaultType);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Fire);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Lightning);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Arcane);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Physical);
 
 /**
  * EFFECTS
@@ -82,7 +94,7 @@ struct FAuraGameplayTags
  static void InitializeNativeGameplayTags();
 
  FGameplayTagContainer AuraAllTagsContainer;
- TArray<FGameplayTag> DamageTypes;
+ TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
  
 private:
  static FAuraGameplayTags AuraGameplayTags;

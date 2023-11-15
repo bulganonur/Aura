@@ -26,6 +26,12 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Secondary_ManaRegeneration, "Attribute.
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Secondary_MaxHealth, "Attribute.Secondary.MaxHealth", "Maximum Amount of Health Obtainable");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Secondary_MaxMana, "Attribute.Secondary.MaxMana", "Maximum Amount of Mana Obtainable");
 
+// Secondary Attributes (Resistance Attributes)
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Secondary_ArcaneResistance, "Attribute.Secondary.ArcaneResistance", "Resistance to Arcane Damage");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Secondary_FireResistance, "Attribute.Secondary.FireResistance", "Resistance to Fire Damage");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Secondary_LightningResistance, "Attribute.Secondary.LightningResistance", "Resistance to Lightning Damage");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Secondary_PhysicalResistance, "Attribute.Secondary.PhysicalResistance", "Resistance to Physical Damage");
+
 // Messages
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Message_HealthCrystal, "Message.HealthCrystal", "tba");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Message_HealthPotion, "Message.HealthPotion", "tba");
@@ -43,6 +49,9 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_4, "InputTag.4", "Input Tag for 4 key");
 // Damage Types
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage_DefaultType, "Damage.DefaultType", "Default Damage Type Tag. Usually for Set by Caller Magnitude");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage_Fire, "Damage.Fire", "Fire damage type");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage_Lightning, "Damage.Lightning", "Lightning damage type");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage_Arcane, "Damage.Arcane", "Arcane damage type");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage_Physical, "Damage.Physical", "Physical damage type");
 
 // Effects
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Effect_HitReact, "Effect.HitReact", "Tag Granted for hit reaction via GameplayEffect");
@@ -71,15 +80,17 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	AuraGameplayTags.AuraAllTagsContainer.AddTag(Attribute_Secondary_MaxHealth);
 	AuraGameplayTags.AuraAllTagsContainer.AddTag(Attribute_Secondary_MaxMana);
 
-	AuraGameplayTags.AuraAllTagsContainer.AddTag(Message_HealthCrystal);
-	AuraGameplayTags.AuraAllTagsContainer.AddTag(Message_HealthPotion);
-	AuraGameplayTags.AuraAllTagsContainer.AddTag(Message_ManaCrystal);
-	AuraGameplayTags.AuraAllTagsContainer.AddTag(Message_ManaPotion);
+	AuraGameplayTags.AuraAllTagsContainer.AddTag(Attribute_Secondary_ArcaneResistance);
+	AuraGameplayTags.AuraAllTagsContainer.AddTag(Attribute_Secondary_FireResistance);
+	AuraGameplayTags.AuraAllTagsContainer.AddTag(Attribute_Secondary_LightningResistance);
+	AuraGameplayTags.AuraAllTagsContainer.AddTag(Attribute_Secondary_PhysicalResistance);
 
-	// DamageTypes Array
+	// DamageTypes to Resistances Map
+	AuraGameplayTags.DamageTypesToResistances.Add(Damage_Arcane, Attribute_Secondary_ArcaneResistance);
+	AuraGameplayTags.DamageTypesToResistances.Add(Damage_Fire, Attribute_Secondary_FireResistance);
+	AuraGameplayTags.DamageTypesToResistances.Add(Damage_Lightning, Attribute_Secondary_LightningResistance);
+	AuraGameplayTags.DamageTypesToResistances.Add(Damage_Physical, Attribute_Secondary_PhysicalResistance);
 
-	AuraGameplayTags.DamageTypes.Add(Damage_DefaultType);
-	AuraGameplayTags.DamageTypes.Add(Damage_Fire);
 }
 
 const FAuraGameplayTags& FAuraGameplayTags::Get()

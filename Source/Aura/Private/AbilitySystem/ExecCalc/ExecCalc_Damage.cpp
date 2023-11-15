@@ -17,6 +17,13 @@ struct AuraDamageStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitChance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitDamage);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitResistance);
+
+	DECLARE_ATTRIBUTE_CAPTUREDEF(ArcaneResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(FireResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(LightningResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalResistance);
+
+	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
 	
 	AuraDamageStatics()
 	{
@@ -26,6 +33,23 @@ struct AuraDamageStatics
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitChance, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitDamage, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitResistance, Target, false);
+
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, ArcaneResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, FireResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, LightningResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, PhysicalResistance, Target, false);
+
+		TagsToCaptureDefs.Add(Attribute_Secondary_Armor, ArmorDef);
+		TagsToCaptureDefs.Add(Attribute_Secondary_ArmorPenetration, ArmorPenetrationDef);
+		TagsToCaptureDefs.Add(Attribute_Secondary_BlockChance, BlockChanceDef);
+		TagsToCaptureDefs.Add(Attribute_Secondary_CriticalHitChance, CriticalHitChanceDef);
+		TagsToCaptureDefs.Add(Attribute_Secondary_CriticalHitDamage, CriticalHitDamageDef);
+		TagsToCaptureDefs.Add(Attribute_Secondary_CriticalHitResistance, CriticalHitResistanceDef);
+
+		TagsToCaptureDefs.Add(Attribute_Secondary_ArcaneResistance, ArcaneResistanceDef);
+		TagsToCaptureDefs.Add(Attribute_Secondary_FireResistance, FireResistanceDef);
+		TagsToCaptureDefs.Add(Attribute_Secondary_LightningResistance, LightningResistanceDef);
+		TagsToCaptureDefs.Add(Attribute_Secondary_PhysicalResistance, PhysicalResistanceDef);
 	}
 };
 
@@ -43,6 +67,11 @@ UExecCalc_Damage::UExecCalc_Damage()
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitChanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitDamageDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitResistanceDef);
+
+	RelevantAttributesToCapture.Add(DamageStatics().ArcaneResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().FireResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().LightningResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().PhysicalResistanceDef);
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -77,10 +106,33 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	// Actual damage of the effect
 	float Damage = 0.0f;
 	
-	// Get Damage Set by Caller Magnitude - get all damage types and add their values to Damage
-	for (const FGameplayTag& Tag : FAuraGameplayTags::Get().DamageTypes)
+	// Get all damage types(and their SetByCallerMagnitudes) and resistances(associated with DamageTypes) of this effect
+	// for the calculation of the actual Damage
+	for (const TTuple<FGameplayTag, FGameplayTag>& Map : FAuraGameplayTags::Get().DamageTypesToResistances)
 	{
-		const float DamageTypeValue = GESpec.GetSetByCallerMagnitude(Tag);
+		const FGameplayTag DamageTypeTag = Map.Key;
+
+		// Get Resistance Tag associated with the Damage Type Tag
+		const FGameplayTag ResistanceTag = Map.Value;
+
+		// check if the CaptureDef exists for this Resistance Tag
+		checkf(AuraDamageStatics().TagsToCaptureDefs.Contains(ResistanceTag), TEXT("TagsToCaptureDefs doesn't contain Tag: [%s] in Class: [%s] !"), *ResistanceTag.ToString(), *GetNameSafe(this));
+
+		// Get Capture Definition associated with the Resistance Tag
+		const FGameplayEffectAttributeCaptureDefinition CaptureDef = AuraDamageStatics().TagsToCaptureDefs[ResistanceTag];
+
+		// Get the actual damage set by the caller for this DamageType Tag
+		float DamageTypeValue = GESpec.GetSetByCallerMagnitude(Map.Key);
+
+		// Get Target's Resistance magnitude
+		float TargetResistance;
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluationParameters, OUT TargetResistance);
+		TargetResistance = FMath::Max<float>(TargetResistance, 0.0f);
+
+		// Ignore some of the Damage based on Target's Resistance
+		DamageTypeValue *= (100.0f - TargetResistance) / 100.0f;
+
+		// Add the resulting DamageTypeValue to the actual damage of this Effect
 		Damage += DamageTypeValue;
 	}
 	
