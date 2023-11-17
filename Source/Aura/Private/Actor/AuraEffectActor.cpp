@@ -11,10 +11,14 @@ AAuraEffectActor::AAuraEffectActor()
 
 	SetRootComponent(CreateDefaultSubobject<USceneComponent>("SceneRoot"));
 	ActorLevel = 1.0f;
+	bApplyEffectToEnemies = false;
 }
 
-void AAuraEffectActor::ApplyEffectToActor(AActor* Actor, const TSubclassOf<UGameplayEffect> GameplayEffectClass) const
+void AAuraEffectActor::ApplyEffectToActor(AActor* Actor, const TSubclassOf<UGameplayEffect> GameplayEffectClass)
 {
+	// @todo: find a better way to check for an enemy (perhaps Enemy Interface or GameplayTags?)
+	if (Actor->ActorHasTag("Enemy") && !bApplyEffectToEnemies) { return ; }
+	
 	UAbilitySystemComponent* ActorASC =  UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Actor);
 	if (!ActorASC) { return; }
 	check(GameplayEffectClass);
@@ -23,10 +27,18 @@ void AAuraEffectActor::ApplyEffectToActor(AActor* Actor, const TSubclassOf<UGame
 	GEContextHandle.AddSourceObject(this);
 	const FGameplayEffectSpecHandle GESpecHandle = ActorASC->MakeOutgoingSpec(GameplayEffectClass, ActorLevel, GEContextHandle);
 	ActorASC->ApplyGameplayEffectSpecToSelf(*GESpecHandle.Data.Get());
+
+	if (GESpecHandle.Data->Def.Get()->DurationPolicy != EGameplayEffectDurationType::Infinite)
+	{
+		Destroy();
+	}
 }
 
 void AAuraEffectActor::RemoveEffectFromActor(AActor* Actor, const TSubclassOf<UGameplayEffect> GameplayEffectClass)
 {
+	// @todo: find a better way to check for an enemy (perhaps Enemy Interface or GameplayTags?)
+	if (Actor->ActorHasTag("Enemy") && !bApplyEffectToEnemies) { return ; }
+	
 	UAbilitySystemComponent* ActorASC =  UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Actor);
 	if (!ActorASC) { return; }
 	check(GameplayEffectClass);
@@ -34,7 +46,7 @@ void AAuraEffectActor::RemoveEffectFromActor(AActor* Actor, const TSubclassOf<UG
 	ActorASC->RemoveActiveGameplayEffectBySourceEffect(GameplayEffectClass, ActorASC, 1);
 }
 
-void AAuraEffectActor::OnBeginOverlap(AActor* OtherActor)
+/*void AAuraEffectActor::OnBeginOverlap(AActor* OtherActor)
 {
 	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnBeginOverlap)
 	{
@@ -45,9 +57,9 @@ void AAuraEffectActor::OnBeginOverlap(AActor* OtherActor)
 	{
 		ApplyEffectToActor(OtherActor, DurationGameplayEffectClass);
 	}
-}
+}*/
 
-void AAuraEffectActor::OnEndOverlap(AActor* OtherActor)
+/*void AAuraEffectActor::OnEndOverlap(AActor* OtherActor)
 {
 	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
 	{
@@ -58,4 +70,4 @@ void AAuraEffectActor::OnEndOverlap(AActor* OtherActor)
 	{
 		ApplyEffectToActor(OtherActor, DurationGameplayEffectClass);
 	}
-}
+}*/

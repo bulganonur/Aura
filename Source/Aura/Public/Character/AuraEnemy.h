@@ -8,8 +8,11 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AuraEnemy.generated.h"
 
-enum class ECharacterClass : uint8;
+class AAuraAIController;
+class UBehaviorTree;
 class UWidgetComponent;
+enum class ECharacterClass : uint8;
+
 /**
  * 
  */
@@ -21,7 +24,8 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
 public:
 	
 	AAuraEnemy();
-
+	virtual void PossessedBy(AController* NewController) override;
+	
 	//~ Begin Enemy Interface
 
 	virtual void HighlightActor() override;
@@ -65,6 +69,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<UWidgetComponent> WidgetComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	UPROPERTY()
+	TObjectPtr<AAuraAIController> AuraAIController;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	float AfterDeathLifeSpan;
