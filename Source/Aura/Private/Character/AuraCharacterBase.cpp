@@ -3,6 +3,7 @@
 
 #include "Character/AuraCharacterBase.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
@@ -21,6 +22,8 @@ AAuraCharacterBase::AAuraCharacterBase()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMesh");
 	Weapon->SetupAttachment(GetMesh(), "WeaponHandSocket");
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	bIsDead = false;
 }
 
 void AAuraCharacterBase::BeginPlay()
@@ -52,14 +55,29 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	Dissolve();
+
+	bIsDead = true;
 }
 
-FVector AAuraCharacterBase::GetCombatSocketLocation()
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) const
 {
-	return Weapon->GetSocketLocation(WeaponTipSocketName);
+	if (MontageTag.MatchesTagExact(Montage_Attack_Weapon))
+	{
+		return Weapon->GetSocketLocation(WeaponTipSocketName);
+	}
+	if (MontageTag.MatchesTagExact(Montage_Attack_RightHand))
+	{
+		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+	if (MontageTag.MatchesTagExact(Montage_Attack_LeftHand))
+	{
+		return GetMesh()->GetSocketLocation(LeftHandSocketName);
+	}
+
+	return FVector();
 }
 
-UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
+UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation() const
 {
 	return HitReactMontage;
 }
@@ -68,6 +86,21 @@ void AAuraCharacterBase::Die()
 {
 	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
 	MulticastHandleDeath();
+}
+
+bool AAuraCharacterBase::IsDead_Implementation() const
+{
+	return bIsDead;
+}
+
+AActor* AAuraCharacterBase::GetAvatar_Implementation()
+{
+	return this;
+}
+
+TArray<FTaggedMontage> AAuraCharacterBase::GetAttackMontages_Implementation()
+{
+	return AttackMontages;
 }
 
 void AAuraCharacterBase::InitAbilityActorInfo()

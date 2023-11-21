@@ -82,6 +82,21 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Physical);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Effect_HitReact);
 
 /**
+ * ABILITIES
+ */
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Attack);
+
+/**
+ * MONTAGE
+ */
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Montage_Attack_Weapon);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Montage_Attack_RightHand);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Montage_Attack_LeftHand);
+
+
+/**
  * AuraGameplayTags
  *
  * Singleton containing native GameplayTags

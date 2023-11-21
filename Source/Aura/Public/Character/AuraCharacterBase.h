@@ -41,10 +41,26 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	FName WeaponTipSocketName;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	FName RightHandSocketName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	FName LeftHandSocketName;
+
+	bool bIsDead;
+
 	//~ Begin Combat Interface
-	virtual FVector GetCombatSocketLocation() override;
-	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+	
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) const override;
+	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
 	virtual void Die() override;
+	virtual bool IsDead_Implementation() const override;
+	virtual AActor* GetAvatar_Implementation() override;
+	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TArray<FTaggedMontage> AttackMontages;
+	
 	//~ End Combat Interface
 	
 	UPROPERTY()

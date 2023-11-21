@@ -22,9 +22,6 @@ enum class ECharacterClass : uint8
 
 /**
  *
- * If this is not populated further (Currently only one variable), can be moved in to the data asset class.
- * If you decide to move don't forget to update the TMap and the getter function.
- * 
  */
 USTRUCT(BlueprintType)
 struct FCharacterClassDefaultInfo
@@ -33,6 +30,10 @@ struct FCharacterClassDefaultInfo
 
 	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")
 	TSubclassOf<UGameplayEffect> PrimaryAttributes;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")
+	TArray<TSubclassOf<UGameplayAbility>> ClassAbilities;
+	
 };
 
 /**

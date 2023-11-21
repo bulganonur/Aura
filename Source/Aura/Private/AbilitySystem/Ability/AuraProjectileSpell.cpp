@@ -24,37 +24,36 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& TargetLocation)
 	
 	if (!bIsServer) { return; }
 	
-	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
+	const FVector SpawnLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), Montage_Attack_Weapon);
+	const FRotator SpawnRotation = (TargetLocation - SpawnLocation).Rotation();
+
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(SpawnLocation);
+	SpawnTransform.SetRotation(SpawnRotation.Quaternion());
+
+	AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>
+	(
+		ProjectileClass,
+		SpawnTransform,
+		GetOwningActorFromActorInfo(),
+		Cast<APawn>(GetAvatarActorFromActorInfo()),
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+	);
+
+	// Setup GameplayEffect
+	const UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
+	FGameplayEffectContextHandle GEContextHandle = SourceASC->MakeEffectContext();
+	GEContextHandle.SetAbility(this);
+	GEContextHandle.AddSourceObject(Projectile);
+	const FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), GEContextHandle);
+
+	// Modify GameplayEffect - get all DamageTypes by tag and their magnitude then assign set by caller
+	for (const auto& Map : DamageTypes)
 	{
-		const FVector SpawnLocation = CombatInterface->GetCombatSocketLocation();
-		const FRotator SpawnRotation = (TargetLocation - SpawnLocation).Rotation();
-
-		FTransform SpawnTransform;
-		SpawnTransform.SetLocation(SpawnLocation);
-		SpawnTransform.SetRotation(SpawnRotation.Quaternion());
-	
-		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>
-		(
-			ProjectileClass,
-			SpawnTransform,
-			GetOwningActorFromActorInfo(),
-			Cast<APawn>(GetAvatarActorFromActorInfo()),
-			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
-		);
-		
-		const UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
-		FGameplayEffectContextHandle GEContextHandle = SourceASC->MakeEffectContext();
-		GEContextHandle.SetAbility(this);
-		GEContextHandle.AddSourceObject(Projectile);
-		const FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), GEContextHandle);
-
-		for (const auto& Map : DamageTypes)
-		{
-			const float ScaledDamage = Map.Value.GetValueAtLevel(GetAbilityLevel());
-			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GESpecHandle, Map.Key, ScaledDamage);
-		}
-		
-		Projectile->DamageEffectSpecHandle = GESpecHandle;
-		Projectile->FinishSpawning(SpawnTransform);
+		const float ScaledDamage = Map.Value.GetValueAtLevel(GetAbilityLevel());
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GESpecHandle, Map.Key, ScaledDamage);
 	}
+	
+	Projectile->DamageEffectSpecHandle = GESpecHandle;
+	Projectile->FinishSpawning(SpawnTransform);
 }

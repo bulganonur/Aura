@@ -120,10 +120,16 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
 
+			const bool bBlock = UAuraAbilitySystemLibrary::IsBlockedHit(Props.GEContextHandle);
+			const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.GEContextHandle);
+			
 			if (AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(Props.SourceController))
 			{
-				const bool bBlock = UAuraAbilitySystemLibrary::IsBlockedHit(Props.GEContextHandle);
-				const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.GEContextHandle);
+				AuraPC->ClientShowDamageWidget(Props.TargetAvatar, LocalIncomingDamage, bBlock, bCriticalHit);
+				return; // return so widget is only shown once, for pvp
+			}
+			if (AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(Props.TargetController))
+			{
 				AuraPC->ClientShowDamageWidget(Props.TargetAvatar, LocalIncomingDamage, bBlock, bCriticalHit);
 			}
 		}

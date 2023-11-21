@@ -6,6 +6,7 @@
 #include "AuraAbilitySystemTypes.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Game/AuraGameModeBase.h"
+#include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
@@ -83,13 +84,19 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 }
 
 void UAuraAbilitySystemLibrary::InitializeStartupAbilities(const UObject* WorldContextObject,
-	UAbilitySystemComponent* ASC)
+	UAbilitySystemComponent* ASC, ECharacterClass CharacterClass, int32 Level)
 {
 	if (UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject))
 	{
 		for (const TSubclassOf<UGameplayAbility>& AbilityClass : CharacterClassInfo->CommonAbilities)
 		{
 			FGameplayAbilitySpec GASpec = ASC->BuildAbilitySpecFromClass(AbilityClass, 1);
+			ASC->GiveAbility(GASpec);
+		}
+
+		for (const TSubclassOf<UGameplayAbility>& AbilityClass : CharacterClassInfo->GetClassDefaultInfo(CharacterClass).ClassAbilities)
+		{
+			FGameplayAbilitySpec GASpec = ASC->BuildAbilitySpecFromClass(AbilityClass, Level);
 			ASC->GiveAbility(GASpec);
 		}
 	}
@@ -138,5 +145,37 @@ void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& G
 	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(GEContextHandle.Get()))
 	{
 		AuraEffectContext->SetIsCriticalHit(InIsCriticalHit);
+	}
+}
+
+void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldContextObject,
+	TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, const FVector& SphereOrigin,
+	float Radius)
+{
+	FCollisionQueryParams SphereParams;
+	SphereParams.bTraceComplex = false;
+	SphereParams.MobilityType = EQueryMobilityType::Dynamic;
+	SphereParams.AddIgnoredActors(ActorsToIgnore);
+
+	TArray<FOverlapResult> Overlaps;
+	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		World->OverlapMultiByObjectType
+		(
+			Overlaps,
+			SphereOrigin,
+			FQuat::Identity,
+			FCollisionObjectQueryParams(FCollisionObjectQueryParams::AllDynamicObjects),
+			FCollisionShape::MakeSphere(Radius),
+			SphereParams
+		);
+		if (Overlaps.IsEmpty()) { return; }
+		for (const FOverlapResult& Overlap : Overlaps)
+		{
+			if (Overlap.GetActor()->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsDead(Overlap.GetActor()))
+			{
+				OutOverlappingActors.AddUnique(Overlap.GetActor());
+			}
+		}
 	}
 }

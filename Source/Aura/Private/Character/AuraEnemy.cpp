@@ -62,7 +62,7 @@ void AAuraEnemy::BeginPlay()
 	InitAbilityActorInfo();
 	if (HasAuthority())
 	{
-		UAuraAbilitySystemLibrary::InitializeStartupAbilities(this, AbilitySystemComponent);
+		UAuraAbilitySystemLibrary::InitializeStartupAbilities(this, AbilitySystemComponent, CharacterClass, Level);
 	}
 
 	// set progressbar's widget controller as this
@@ -119,6 +119,16 @@ void AAuraEnemy::UnHighlightActor()
 {
 	GetMesh()->SetRenderCustomDepth(false);
 	Weapon->SetRenderCustomDepth(false);
+}
+
+void AAuraEnemy::SetCombatTarget_Implementation(AActor* InCombatTarget)
+{
+	CombatTarget = InCombatTarget;
+}
+
+AActor* AAuraEnemy::GetCombatTarget_Implementation() const
+{
+	return CombatTarget;
 }
 
 int32 AAuraEnemy::GetAuraLevel() const

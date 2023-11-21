@@ -30,6 +30,8 @@ public:
 
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
+	virtual AActor* GetCombatTarget_Implementation() const override;
 	
 	//~ End Enemy Interface
 
@@ -75,6 +77,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<AAuraAIController> AuraAIController;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+	TObjectPtr<AActor> CombatTarget;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	float AfterDeathLifeSpan;
