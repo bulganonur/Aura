@@ -139,6 +139,10 @@ int32 AAuraEnemy::GetAuraLevel() const
 void AAuraEnemy::Die()
 {
 	SetLifeSpan(AfterDeathLifeSpan);
+	if (AuraAIController)
+	{
+		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsDead"), true);
+	}
 	Super::Die();
 }
 
