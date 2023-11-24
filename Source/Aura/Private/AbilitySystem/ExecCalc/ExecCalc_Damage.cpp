@@ -210,6 +210,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 float UExecCalc_Damage::GetCapturedAttributeMagnitude(const FGameplayEffectCustomExecutionParameters& ExecutionParams, const FAggregatorEvaluateParameters& EvaluateParams, const FGameplayEffectAttributeCaptureDefinition& CaptureDefinition) const
 {
+	// @todo: use this getter in Execute_Implementation function and refactor further if possible
+	
 	float AttributeMagnitude;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDefinition, EvaluateParams, AttributeMagnitude);
 	AttributeMagnitude = FMath::Max<float>(AttributeMagnitude, 0.0f);
