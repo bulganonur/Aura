@@ -55,6 +55,13 @@ void AAuraEnemy::PossessedBy(AController* NewController)
 	
 }
 
+void AAuraEnemy::LifeSpanExpired()
+{
+	Super::LifeSpanExpired();
+	
+	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.0f, FColor::Emerald, FString::Printf(TEXT("LifeSpanExpired: %s"), *GetNameSafe(this)));
+}
+
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();

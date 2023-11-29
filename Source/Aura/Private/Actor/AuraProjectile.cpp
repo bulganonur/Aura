@@ -27,7 +27,7 @@ AAuraProjectile::AAuraProjectile()
 	SphereComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
 	SphereComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
 	SphereComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-
+	
 	ProjectileMoveComp = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
 	ProjectileMoveComp->InitialSpeed = 550.0f;
 	ProjectileMoveComp->MaxSpeed = 550.0f;
@@ -49,7 +49,7 @@ void AAuraProjectile::PostInitializeComponents()
 void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
 	SetLifeSpan(LifeSpan);
 	UGameplayStatics::PlaySoundAtLocation(this, Cast_SFX, GetActorLocation());
 }
@@ -61,6 +61,7 @@ void AAuraProjectile::Destroyed()
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, Impact_SFX, GetActorLocation());
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, Impact_VFX, GetActorLocation());
+		bHasServerHitHappened = true;
 	}
 
 	Super::Destroyed();
@@ -77,6 +78,7 @@ void AAuraProjectile::OnSphereCompBeginOverlap(UPrimitiveComponent* OverlappedCo
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, Impact_SFX, GetActorLocation());
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, Impact_VFX, GetActorLocation());
+		bHasServerHitHappened = true;
 	}
 	
 	if (HasAuthority()) // for server, carry on. everything happens as expected

@@ -122,7 +122,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		const FGameplayEffectAttributeCaptureDefinition CaptureDef = AuraDamageStatics().TagsToCaptureDefs[ResistanceTag];
 
 		// Get the actual damage set by the caller for this DamageType Tag
-		float DamageTypeValue = GESpec.GetSetByCallerMagnitude(Map.Key);
+		float DamageTypeValue = GESpec.GetSetByCallerMagnitude(Map.Key, false);
 
 		// Get Target's Resistance magnitude
 		float TargetResistance;

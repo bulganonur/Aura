@@ -8,6 +8,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UNiagaraSystem;
 class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
@@ -47,19 +48,28 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	FName LeftHandSocketName;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	FName TailSocketName;
+
 	bool bIsDead;
 
 	//~ Begin Combat Interface
 	
-	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) const override;
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& SocketTag) const override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
 	virtual void Die() override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
+	virtual UNiagaraSystem* GetBloodEffect_Implementation() const override;
+	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& Tag) const override;
+	virtual int32 GetMinionCount_Implementation() const override;
+	virtual void SetMinionCount_Implementation(const int32 Count) override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
+
+	int32 MinionCount;
 	
 	//~ End Combat Interface
 	
@@ -95,6 +105,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UNiagaraSystem> BloodEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<USoundBase> DeathSound;
 
 private:
 

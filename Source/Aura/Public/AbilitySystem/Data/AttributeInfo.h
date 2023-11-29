@@ -42,6 +42,6 @@ public:
 	void PopulateDataAsset();
 	FAuraAttributeInfo GetAttributeInfoByTag(const FGameplayTag& Tag, bool bLogNotFound = false) const;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty="{AttributeName}"))
 	TArray<FAuraAttributeInfo> AttributeInfo;
 };

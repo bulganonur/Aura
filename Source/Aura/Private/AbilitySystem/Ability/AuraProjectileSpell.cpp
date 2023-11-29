@@ -4,7 +4,6 @@
 #include "AbilitySystem/Ability/AuraProjectileSpell.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AuraGameplayTags.h"
 #include "Actor/AuraProjectile.h"
 #include "Interaction/CombatInterface.h"
 
@@ -17,14 +16,14 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	
 }
 
-void UAuraProjectileSpell::SpawnProjectile(const FVector& TargetLocation)
+void UAuraProjectileSpell::SpawnProjectile(const FVector& TargetLocation, const FGameplayTag& SocketTag)
 {
 	/*const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();*/
 	const bool bIsServer = HasAuthority(&GetCurrentActivationInfoRef());
 	
 	if (!bIsServer) { return; }
 	
-	const FVector SpawnLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), Montage_Attack_Weapon);
+	const FVector SpawnLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), SocketTag);
 	const FRotator SpawnRotation = (TargetLocation - SpawnLocation).Rotation();
 
 	FTransform SpawnTransform;

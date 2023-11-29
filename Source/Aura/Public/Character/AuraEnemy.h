@@ -50,6 +50,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
 	float BaseWalkSpeed;
+
+	virtual void LifeSpanExpired() override;
 	
 protected:
 	
