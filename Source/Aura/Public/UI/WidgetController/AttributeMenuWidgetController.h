@@ -31,7 +31,7 @@ public:
 	FOnAttributeInfoChangeSignature OnAttributeInfoChangeDelegate;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UAttributeInfo> AttributeInfo;
 
 private:

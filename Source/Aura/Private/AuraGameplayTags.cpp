@@ -39,6 +39,7 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Message_ManaCrystal, "Message.ManaCrystal", "tba"
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Message_ManaPotion, "Message.ManaPotion", "tba");
 
 // Input
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Default, "InputTag.Default", "Default Input Tag, used to get parent tag via RequestDirectParent");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_LMB, "InputTag.LMB", "Input Tag for left mouse button");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_RMB, "InputTag.RMB", "Input Tag for right mouse button");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_1, "InputTag.1", "Input Tag for 1 key");
@@ -57,8 +58,10 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage_Physical, "Damage.Physical", "Physical dam
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Effect_HitReact, "Effect.HitReact", "Tag Granted for hit reaction via GameplayEffect");
 
 // Abilities
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Default, "Ability.Default", "Default Ability Tag, used to get parent tag via RequestDirectParent");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Attack, "Ability.Attack", "Attack Ability");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Summon, "Ability.Summon", "Summon Ability");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Fire_FireBolt, "Ability.Fire.FireBolt", "FireBolt Ability");
 
 // Combat Sockets
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(CombatSocket_Weapon, "CombatSocket.Weapon", "Weapon CombatSocket");
@@ -71,6 +74,9 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Montage_Attack_1, "Montage.Attack.1", "Attack Mon
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Montage_Attack_2, "Montage.Attack.2", "Attack Montage 2");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Montage_Attack_3, "Montage.Attack.3", "Attack Montage 3");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Montage_Attack_4, "Montage.Attack.4", "Attack Montage 4");
+
+// Cool Downs
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(CoolDown_Fire_FireBolt, "CoolDown.Fire.FireBolt", "FireBolt CoolDown Tag");
 
 FAuraGameplayTags FAuraGameplayTags::AuraGameplayTags;
 

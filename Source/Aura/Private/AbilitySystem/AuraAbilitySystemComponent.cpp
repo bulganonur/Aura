@@ -2,9 +2,14 @@
 
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
-
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/Ability/AuraGameplayAbility.h"
+#include "Aura/AuraLogChannels.h"
+
+UAuraAbilitySystemComponent::UAuraAbilitySystemComponent()
+{
+	bHasStartupAbilitiesGiven = false;
+}
 
 void UAuraAbilitySystemComponent::PostInitAbilityActorInfo()
 {
@@ -22,6 +27,9 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 			GiveAbility(AbilitySpec);
 		}
 	}
+	
+	bHasStartupAbilitiesGiven = true;
+	OnAbilityGivenDelegate.Broadcast();
 }
 
 void UAuraAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& Tag)
@@ -48,6 +56,58 @@ void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& Ta
 		AbilitySpecInputReleased(AbilitySpec);
 	}
 }
+
+void UAuraAbilitySystemComponent::ForEachAbility(const FForEachAbility& Delegate)
+{
+	FScopedAbilityListLock ActiveScopeLock(*this);
+	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if (!Delegate.ExecuteIfBound(AbilitySpec))
+		{
+			UE_LOG(LogAura, Error, TEXT("Failed to execute delegate in %hs"), __FUNCTION__);
+		}
+	}
+}
+
+FGameplayTag UAuraAbilitySystemComponent::GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	if (AbilitySpec.Ability)
+	{
+		for (FGameplayTag Tag : AbilitySpec.Ability.Get()->AbilityTags)
+		{
+			if (Tag.MatchesTag(Ability_Default.GetTag().RequestDirectParent()))
+			{
+				return Tag;
+			}
+		}
+	}
+	return FGameplayTag();
+}
+
+FGameplayTag UAuraAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	for (FGameplayTag Tag : AbilitySpec.DynamicAbilityTags)
+	{
+		if (Tag.MatchesTag(InputTag_Default.GetTag().RequestDirectParent()))
+		{
+			return Tag;
+		}
+	}
+	
+	return FGameplayTag();
+}
+
+void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
+{
+	Super::OnRep_ActivateAbilities();
+
+	if (!bHasStartupAbilitiesGiven)
+	{
+		OnAbilityGivenDelegate.Broadcast();
+		bHasStartupAbilitiesGiven = true;
+	}
+}
+
 
 void UAuraAbilitySystemComponent::ClientOnGameplayEffectApplied_Implementation(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& GESpec, FActiveGameplayEffectHandle GEHandle) const
 {
