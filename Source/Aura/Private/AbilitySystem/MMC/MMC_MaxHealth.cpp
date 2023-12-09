@@ -34,11 +34,9 @@ float UMMC_MaxHealth::CalculateBaseMagnitude_Implementation(const FGameplayEffec
 	GetCapturedAttributeMagnitude(VigorDef, Spec, EvaluationParameters, OUT VigorMagnitude);
 	VigorMagnitude = FMath::Max<float>(VigorMagnitude, 0.0f); // Make sure Vigor is never below 0.0f
 
-	// check if the Source Object implements ICombatInterface
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
-	check(CombatInterface);
-	
-	const int32 AuraLevel = CombatInterface->GetAuraLevel();
+	// check if the Source Object implements ICombatInterface and get AuraLevel
+	const int32 AuraLevel = ICombatInterface::Execute_GetAuraLevel(Spec.GetContext().GetSourceObject());
+
 	VigorMagnitude = 80.0f + 2.5f * VigorMagnitude + 10.0f * AuraLevel; // calculation
 
 	return VigorMagnitude;

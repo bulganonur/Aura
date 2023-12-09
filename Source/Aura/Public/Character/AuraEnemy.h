@@ -37,8 +37,9 @@ public:
 
 	//~ Begin Combat Interface
 
-	virtual int32 GetAuraLevel() const override;
+	virtual int32 GetAuraLevel_Implementation() const override;
 	virtual void Die() override;
+	virtual ECharacterClass GetCharacterClass_Implementation() const override;
 	
 	//~ End Combat Interface
 
@@ -60,10 +61,10 @@ protected:
 	virtual void InitializeDefaultAttributes() const override;
 	
 	UPROPERTY(BlueprintAssignable, Category = "GAS | Attributes")
-	FOnAttributeChangeSignature OnHealthChange;
+	FOnAttributeChange OnHealthChange;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS | Attributes")
-	FOnAttributeChangeSignature OnMaxHealthChange;
+	FOnAttributeChange OnMaxHealthChange;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	int32 Level;

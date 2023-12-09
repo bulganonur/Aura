@@ -84,17 +84,17 @@ void AAuraEnemy::BeginPlay()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 			AuraAttributeSet->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
 			{
-				OnHealthChange.Broadcast(Data.OldValue, Data.NewValue);
+				OnHealthChange.Broadcast(Data.NewValue);
 			});
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 			AuraAttributeSet->GetMaxHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
 			{
-				OnMaxHealthChange.Broadcast(Data.OldValue, Data.NewValue);
+				OnMaxHealthChange.Broadcast(Data.NewValue);
 			});
 
 		// broadcast initial values
-		OnHealthChange.Broadcast(AuraAttributeSet->GetHealth(), AuraAttributeSet->GetHealth());
-		OnMaxHealthChange.Broadcast(AuraAttributeSet->GetMaxHealth(), AuraAttributeSet->GetMaxHealth());
+		OnHealthChange.Broadcast(AuraAttributeSet->GetHealth());
+		OnMaxHealthChange.Broadcast(AuraAttributeSet->GetMaxHealth());
 
 		AbilitySystemComponent->RegisterGameplayTagEvent(Effect_HitReact, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::OnHitReactTagChange);
 	}
@@ -138,7 +138,7 @@ AActor* AAuraEnemy::GetCombatTarget_Implementation() const
 	return CombatTarget;
 }
 
-int32 AAuraEnemy::GetAuraLevel() const
+int32 AAuraEnemy::GetAuraLevel_Implementation() const
 {
 	return Level;
 }
@@ -151,6 +151,11 @@ void AAuraEnemy::Die()
 		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsDead"), true);
 	}
 	Super::Die();
+}
+
+ECharacterClass AAuraEnemy::GetCharacterClass_Implementation() const
+{
+	return CharacterClass;
 }
 
 void AAuraEnemy::OnHitReactTagChange(const FGameplayTag CallbackTag, int32 NewCount)

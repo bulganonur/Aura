@@ -163,9 +163,12 @@ void AAuraCharacterBase::InitializeDefaultAttributes() const
 void AAuraCharacterBase::AddCharacterAbilities() const
 {
 	if (!HasAuthority()) { return; }
+
 	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
-	/*UE_LOG(LogTemp, Warning, TEXT("AuraASC: %s"), *AuraASC->GetName());*/
+	if (!AuraASC) { return; }
+
 	AuraASC->AddCharacterAbilities(StartupAbilities);
+	AuraASC->AddCharacterPassiveAbilities(StartupPassiveAbilities);
 }
 
 void AAuraCharacterBase::Dissolve()

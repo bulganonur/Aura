@@ -34,11 +34,9 @@ float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectS
 	GetCapturedAttributeMagnitude(IntelligenceDef, Spec, EvaluationParameters, OUT IntelligenceMagnitude);
 	IntelligenceMagnitude = FMath::Max(IntelligenceMagnitude, 0.0f); // make sure Int is never less than 0.0f
 
-	// check if the Source Object implements ICombatInterface
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
-	check(CombatInterface);
-	
-	const int32 AuraLevel = CombatInterface->GetAuraLevel();
+	// check if the Source Object implements ICombatInterface and get AuraLevel
+	const int32 AuraLevel = ICombatInterface::Execute_GetAuraLevel(Spec.GetContext().GetSourceObject());
+
 	IntelligenceMagnitude = 50.0f + 2.5f * IntelligenceMagnitude + 15.0f * AuraLevel; // calculation
 	
 	return IntelligenceMagnitude;

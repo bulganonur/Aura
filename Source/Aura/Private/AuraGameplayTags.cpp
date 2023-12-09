@@ -32,6 +32,10 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Secondary_FireResistance, "Attribute.Se
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Secondary_LightningResistance, "Attribute.Secondary.LightningResistance", "Resistance to Lightning Damage");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Secondary_PhysicalResistance, "Attribute.Secondary.PhysicalResistance", "Resistance to Physical Damage");
 
+// Meta Attributes
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Meta_IncomingDamage, "Attribute.Meta.IncomingDamage", "Incoming Damage Meta Attribute");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Meta_IncomingXP, "Attribute.Meta.IncomingXP", "Incoming XP Meta Attribute");
+
 // Messages
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Message_HealthCrystal, "Message.HealthCrystal", "tba");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Message_HealthPotion, "Message.HealthPotion", "tba");

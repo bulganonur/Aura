@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ScalableFloat.h"
 #include "Engine/DataAsset.h"
 #include "CharacterClassInfo.generated.h"
 
@@ -10,7 +11,7 @@ class UGameplayAbility;
 class UGameplayEffect;
 
 /**
- * @todo: better to replace this with GameplayTags.
+ * @todo: maybe better to replace this with GameplayTags?
  */
 UENUM(BlueprintType)
 enum class ECharacterClass : uint8
@@ -33,6 +34,9 @@ struct FCharacterClassDefaultInfo
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")
 	TArray<TSubclassOf<UGameplayAbility>> ClassAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")
+	FScalableFloat XPRewards = FScalableFloat();
 	
 };
 
@@ -45,6 +49,7 @@ class AURA_API UCharacterClassInfo : public UDataAsset
 	GENERATED_BODY()
 
 public:
+	
 	/** Common for all enemies */
 	UPROPERTY(EditDefaultsOnly, Category = "Common Class Defaults")
 	TSubclassOf<UGameplayEffect> SecondaryAttributes;

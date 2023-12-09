@@ -2,13 +2,14 @@
 
 
 #include "AbilitySystem/AuraAttributeSet.h"
-/*#include "AbilitySystemBlueprintLibrary.h"*/
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
-/*#include "AbilitySystem/AuraAbilitySystemComponent.h"*/
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "Aura/AuraLogChannels.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
+#include "Interaction/PlayerInterface.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/AuraPlayerController.h"
 
@@ -79,12 +80,12 @@ void UAuraAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribu
 	if (Attribute == GetHealthAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxHealth());
-		UE_LOG(LogTemp, Warning, TEXT("PREHealth: %f"), NewValue);
+		UE_LOG(LogAura, Warning, TEXT("PREHealth: %f"), NewValue);
 	}
 	if (Attribute == GetManaAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxMana());
-		UE_LOG(LogTemp, Warning, TEXT("PREMana: %f"), NewValue);
+		UE_LOG(LogAura, Warning, TEXT("PREMana: %f"), NewValue);
 	}
 }
 
@@ -94,7 +95,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 
-	UE_LOG(LogTemp, Warning, TEXT("Health Changed On: %s, POSTHealth: %f"), *Props.TargetCharacter.GetName(), GetHealth());
+	UE_LOG(LogAura, Warning, TEXT("Health Changed On: %s, POSTHealth: %f"), *Props.TargetCharacter.GetName(), GetHealth());
 
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
@@ -113,6 +114,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				{
 					EffectedTarget->Die();
 				}
+				SendXPEvent(Props);
 			}
 			else
 			{
@@ -132,6 +134,27 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			{
 				AuraPC->ClientShowDamageWidget(Props.TargetAvatar, LocalIncomingDamage, bBlock, bCriticalHit);
 			}
+		}
+	}
+
+	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
+	{
+		const float LocalIncomingXP = GetIncomingXP();
+		SetIncomingXP(0.0f);
+		
+
+		// @todo: Implement leveling up
+		const int32 CurrentLevel = ICombatInterface::Execute_GetAuraLevel(Props.SourceAvatar);
+		const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceAvatar);
+		const int32 NewLevel = IPlayerInterface::Execute_GetLevelByXP(Props.SourceAvatar, CurrentXP + LocalIncomingXP);
+		const int32 LevelUps = NewLevel - CurrentLevel;
+
+		// @todo: try Execute_AddToXP (or any other PlayerInterface function) with an object which does not implements IPlayerInterface
+		IPlayerInterface::Execute_AddToXP(Props.SourceAvatar, LocalIncomingXP);
+		
+		if (LevelUps > 0)
+		{
+			IPlayerInterface::Execute_LevelUp(Props.SourceAvatar, LevelUps);
 		}
 	}
 }
@@ -162,6 +185,18 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 	{
 		Props.TargetCharacter = Cast<ACharacter>(Props.TargetAvatar);
 	}
+}
+
+void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props) const
+{
+	const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetAvatar);
+	const int32 TargetLevel = ICombatInterface::Execute_GetAuraLevel(Props.TargetAvatar);
+	const int32 TargetXPReward = UAuraAbilitySystemLibrary::GetXPRewardByClassAndLevel(this, TargetClass, TargetLevel);
+
+	FGameplayEventData Payload;
+	Payload.EventTag = Attribute_Meta_IncomingXP;
+	Payload.EventMagnitude = static_cast<float>(TargetXPReward);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceAvatar, Attribute_Meta_IncomingXP, Payload);
 }
 
 void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const

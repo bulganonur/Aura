@@ -84,11 +84,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	// Get AvatarActors
 	const AActor* SourceAvatar = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
 	const AActor* TargetAvatar = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
-
-	// Get CombatInterfaces
-	const ICombatInterface* SourceCombatInterface = Cast<ICombatInterface>(SourceAvatar);
-	const ICombatInterface* TargetCombatInterface = Cast<ICombatInterface>(TargetAvatar);
-
+	
 	// Get GameplayEffectSpec
 	const FGameplayEffectSpec& GESpec = ExecutionParams.GetOwningSpec();
 
@@ -163,14 +159,14 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const UCharacterClassInfo* CharacterClassInfo = UAuraAbilitySystemLibrary::GetCharacterClassInfo(SourceAvatar);
 	const UCurveTable* CoefficientsCT = CharacterClassInfo->DamageCalculationCoefficients;
 	const FRealCurve* ArmorPenetrationCurve = CoefficientsCT->FindCurve(FName("ArmorPenetration"), FString());
-	const float ArmorPenetrationCoefficient = ArmorPenetrationCurve->Eval(SourceCombatInterface->GetAuraLevel());
+	const float ArmorPenetrationCoefficient = ArmorPenetrationCurve->Eval(ICombatInterface::Execute_GetAuraLevel(SourceAvatar));
 	
 	// ArmorPenetration ignores a percentage of the target's Armor
 	const float EffectiveArmor = TargetArmor * (100.0f - SourceArmorPenetration * ArmorPenetrationCoefficient) / 100.0f;
 
 	// Get EffectiveArmor Coefficient from the CurveTable
 	const FRealCurve* EffectiveArmorCurve = CoefficientsCT->FindCurve(FName("EffectiveArmor"), FString());
-	const float EffectiveArmorCoefficient = EffectiveArmorCurve->Eval(TargetCombatInterface->GetAuraLevel());
+	const float EffectiveArmorCoefficient = EffectiveArmorCurve->Eval(ICombatInterface::Execute_GetAuraLevel(TargetAvatar));
 	
 	// Armor ignores a percentage of the IncomingDamage
 	Damage *= (100.0f - EffectiveArmor * EffectiveArmorCoefficient) / 100.0f;
@@ -192,7 +188,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// Get CriticalHitResistance Coefficient from the CurveTable
 	const FRealCurve* CriticalHitResistanceCurve = CoefficientsCT->FindCurve(FName("CriticalHitResistance"), FString());
-	const float CriticalHitResistanceCoefficient = CriticalHitResistanceCurve->Eval(TargetCombatInterface->GetAuraLevel());
+	const float CriticalHitResistanceCoefficient = CriticalHitResistanceCurve->Eval(ICombatInterface::Execute_GetAuraLevel(TargetAvatar));
 	
 	// CriticalHitResistance reduces CriticalHitChance
 	const float EffectiveCriticalHitChance = SourceCriticalHitChance * (100.0f - TargetCriticalHitResistance * CriticalHitResistanceCoefficient) / 100.0f;

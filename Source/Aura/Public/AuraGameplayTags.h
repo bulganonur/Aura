@@ -46,6 +46,13 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_LightningResistance);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_PhysicalResistance);
 
 /**
+ * META ATTRIBUTES
+ */
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Meta_IncomingDamage);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Meta_IncomingXP);
+
+/**
  * MESSAGES
  */
 

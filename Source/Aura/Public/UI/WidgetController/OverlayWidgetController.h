@@ -9,8 +9,9 @@
 class UAbilityInfo;
 class UAuraUserWidget;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAttributeChangeSignature, float, OldValue, float, NewValue);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FAuraAbilityInfo&, Info);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChange, const int32, Value);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChange, const float, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfo, const FAuraAbilityInfo&, Info);
 
 USTRUCT(BlueprintType)
 struct FUIWidgetRow : public FTableRowBase
@@ -30,7 +31,7 @@ struct FUIWidgetRow : public FTableRowBase
 	TObjectPtr<UTexture2D> Image = nullptr;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, const FUIWidgetRow&, WidgetRow);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRow, const FUIWidgetRow&, WidgetRow);
 
 /**
  * 
@@ -44,24 +45,31 @@ public:
 	
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
+	
+	UPROPERTY(BlueprintAssignable, Category = "GAS | Attributes")
+	FOnAttributeChange OnHealthChange;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS | Attributes")
-	FOnAttributeChangeSignature OnHealthChange;
+	FOnAttributeChange OnMaxHealthChange;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS | Attributes")
-	FOnAttributeChangeSignature OnMaxHealthChange;
+	FOnAttributeChange OnManaChange;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS | Attributes")
-	FOnAttributeChangeSignature OnManaChange;
-
-	UPROPERTY(BlueprintAssignable, Category = "GAS | Attributes")
-	FOnAttributeChangeSignature OnMaxManaChange;
+	FOnAttributeChange OnMaxManaChange;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS | Messages")
-	FMessageWidgetRowSignature MessageWidgetRowDelegate;
+	FMessageWidgetRow MessageWidgetRow;
 
-	UPROPERTY(BlueprintAssignable, Category="GAS | Messages")
-	FAbilityInfoSignature AbilityInfoDelegate;
+	UPROPERTY(BlueprintAssignable, Category = "GAS | Messages")
+	FAbilityInfo AbilityInfoDelegate;
+
+	/** fyi: XP is not an Attribute, using this signature for convenience */
+	UPROPERTY(BlueprintAssignable, Category = "GAS | PlayerStats")
+	FOnAttributeChange OnXPChangeDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "GAS | PlayerStats")
+	FOnPlayerStatChange OnAuraLevelChange;
 	
 protected:
 
@@ -72,6 +80,7 @@ protected:
 	TObjectPtr<UAbilityInfo> AbilityInfo;
 
 	void OnStartupAbilitiesGiven();
+	void OnXPChange(const int32 NewXP) const;
 
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
@@ -81,5 +90,4 @@ template <typename T>
 T* UOverlayWidgetController::GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag)
 {
 	return DataTable->FindRow<T>(Tag.GetTagName(), TEXT(""));
-	
 }

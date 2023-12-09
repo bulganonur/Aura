@@ -179,3 +179,9 @@ void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldC
 		}
 	}
 }
+
+int32 UAuraAbilitySystemLibrary::GetXPRewardByClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, const int32 EnemyLevel)
+{
+	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
+	return CharacterClassInfo ? CharacterClassInfo->GetClassDefaultInfo(CharacterClass).XPRewards.GetValueAtLevel(EnemyLevel) : 0;
+}

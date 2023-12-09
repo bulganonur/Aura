@@ -4,6 +4,7 @@
 #include "Input/AuraInputAsset.h"
 
 #include "InputAction.h"
+#include "Aura/AuraLogChannels.h"
 
 const UInputAction* UAuraInputAsset::GetAbilityInputActionByTag(const FGameplayTag& Tag, bool bLogNotFound) const
 {
@@ -17,7 +18,7 @@ const UInputAction* UAuraInputAsset::GetAbilityInputActionByTag(const FGameplayT
 
 	if (bLogNotFound)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Input Action not found for InputTag: [%s], on AuraInputAsset: [%s]"), *Tag.ToString(), *GetNameSafe(this));
+		UE_LOG(LogAura, Error, TEXT("Input Action not found for InputTag: [%s], on AuraInputAsset: [%s]"), *Tag.ToString(), *GetNameSafe(this));
 	}
 
 	return nullptr;

@@ -28,6 +28,7 @@ public:
 
 	void PostInitAbilityActorInfo();
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
+	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
 	void AbilityInputTagHeld(const FGameplayTag& Tag);
 	void AbilityInputTagReleased(const FGameplayTag& Tag);
 
