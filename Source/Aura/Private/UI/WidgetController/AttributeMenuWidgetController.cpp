@@ -2,8 +2,10 @@
 
 
 #include "UI/WidgetController/AttributeMenuWidgetController.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/AttributeInfo.h"
+#include "Player/AuraPlayerState.h"
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()
 {
@@ -15,6 +17,12 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	{
 		BroadcastAttributeInfo(Map.Key, Map.Value());
 	}
+
+	const AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(PlayerState);
+	if (!AuraPlayerState) { return; }
+	
+	OnAttributePointChange.Broadcast(AuraPlayerState->GetAttributePoints());
+	OnSpellPointChange.Broadcast(AuraPlayerState->GetSpellPoints());
 }
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
@@ -31,6 +39,28 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 				BroadcastAttributeInfo(Map.Key, Map.Value());
 			});
 	}
+
+	AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(PlayerState);
+	if (!AuraPlayerState) { return; }
+
+	AuraPlayerState->OnAttributePointChangeDelegate.AddLambda([this](const int32 StatValue)
+	{
+		OnAttributePointChange.Broadcast(StatValue);
+	});
+
+	AuraPlayerState->OnSpellPointChangeDelegate.AddLambda([this](const int32 StatValue)
+	{
+		OnSpellPointChange.Broadcast(StatValue);
+	});
+	
+}
+
+void UAttributeMenuWidgetController::SetAttributeValueByTag(const FGameplayTag& AttributeTag)
+{
+	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	if (!AuraASC) { return; }
+
+	AuraASC->SetAttributeValueByTag(AttributeTag);
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& Tag, const FGameplayAttribute& Attribute) const

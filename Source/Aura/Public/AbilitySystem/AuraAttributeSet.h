@@ -64,6 +64,9 @@ private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, OUT FEffectProperties& Props);
 	void SendXPEvent(const FEffectProperties& Props) const;
 	
+	bool bTopOffHealth;
+	bool bTopOffMana;
+	
 public:
 	
 	UAuraAttributeSet();
@@ -71,6 +74,7 @@ public:
 
 	virtual void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 
 	// Associate attributes with tags
 	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;

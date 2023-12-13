@@ -15,6 +15,9 @@
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
+	bTopOffHealth = false;
+	bTopOffMana = false;
+	
 	// Primary Attributes
 	TagsToAttributes.Add(Attribute_Primary_Strength, GetStrengthAttribute);
 	TagsToAttributes.Add(Attribute_Primary_Intelligence, GetIntelligenceAttribute);
@@ -142,8 +145,6 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		const float LocalIncomingXP = GetIncomingXP();
 		SetIncomingXP(0.0f);
 		
-
-		// @todo: Implement leveling up
 		const int32 CurrentLevel = ICombatInterface::Execute_GetAuraLevel(Props.SourceAvatar);
 		const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceAvatar);
 		const int32 NewLevel = IPlayerInterface::Execute_GetLevelByXP(Props.SourceAvatar, CurrentXP + LocalIncomingXP);
@@ -155,7 +156,25 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		if (LevelUps > 0)
 		{
 			IPlayerInterface::Execute_LevelUp(Props.SourceAvatar, LevelUps);
+			bTopOffHealth = true;
+			bTopOffMana = true;
 		}
+	}
+}
+
+void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeChange(Attribute, OldValue, NewValue);
+
+	if (Attribute == GetMaxHealthAttribute() && bTopOffHealth)
+	{
+		SetHealth(GetMaxHealth());
+		bTopOffHealth = false;
+	}
+	if (Attribute == GetMaxManaAttribute() && bTopOffMana)
+	{
+		SetMana(GetMaxMana());
+		bTopOffMana = false;
 	}
 }
 

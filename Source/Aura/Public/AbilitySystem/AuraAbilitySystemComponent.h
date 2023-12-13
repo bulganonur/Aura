@@ -37,6 +37,11 @@ public:
 	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	
+	void SetAttributeValueByTag(const FGameplayTag& AttributeTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetAttributeValueByTag(const FGameplayTag& AttributeTag);
+	
 protected:
 
 	UFUNCTION(Client, Reliable)

@@ -30,10 +30,21 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS | Attributes")
 	FOnAttributeInfoChangeSignature OnAttributeInfoChangeDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category = "GAS | Stats")
+	FOnPlayerStatChange OnAttributePointChange;
+
+	UPROPERTY(BlueprintAssignable, Category = "GAS | Stats")
+	FOnPlayerStatChange OnSpellPointChange;
+
+	UFUNCTION(BlueprintCallable)
+	void SetAttributeValueByTag(const FGameplayTag& AttributeTag);
+
 protected:
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UAttributeInfo> AttributeInfo;
 
 private:
+	
 	void BroadcastAttributeInfo(const FGameplayTag& Tag, const FGameplayAttribute& Attribute) const;
 };

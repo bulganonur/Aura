@@ -33,6 +33,8 @@ public:
 	virtual void LevelUp_Implementation(const int32 InLevel) override;
 	virtual int32 GetXP_Implementation() const override;
 	virtual int32 GetLevelByXP_Implementation(const int32 InXP) override;
+	virtual void AddToAttributePoints_Implementation(const int32 InPoints) override;
+	virtual void AddToSpellPoints_Implementation(const int32 InPoints) override;
 	
 	//~ End Player Interface
 

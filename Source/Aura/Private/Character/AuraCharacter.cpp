@@ -67,7 +67,6 @@ void AAuraCharacter::AddToXP_Implementation(const int32 InXP)
 
 void AAuraCharacter::LevelUp_Implementation(const int32 InLevel)
 {
-	// @todo: Implement LevelUp
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 	
@@ -99,6 +98,22 @@ int32 AAuraCharacter::GetLevelByXP_Implementation(const int32 InXP)
 	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 	return AuraPlayerState->AuraLevelUpInfo->GetLevelUpInfoByXP(InXP).Level;
+}
+
+void AAuraCharacter::AddToAttributePoints_Implementation(const int32 InPoints)
+{
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	AuraPlayerState->AddToAttributePoints(InPoints);
+}
+
+void AAuraCharacter::AddToSpellPoints_Implementation(const int32 InPoints)
+{
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	AuraPlayerState->AddToSpellPoints(InPoints);
 }
 
 int32 AAuraCharacter::GetAuraLevel_Implementation() const

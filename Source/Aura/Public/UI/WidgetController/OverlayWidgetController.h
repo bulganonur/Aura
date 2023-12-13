@@ -9,7 +9,6 @@
 class UAbilityInfo;
 class UAuraUserWidget;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChange, const int32, Value);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChange, const float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfo, const FAuraAbilityInfo&, Info);
 
