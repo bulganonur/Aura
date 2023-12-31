@@ -19,6 +19,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* TargetActor);
 
+	float GetDamageByDamageType(const FGameplayTag& DamageTypeTag, const float InLevel) const;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 	

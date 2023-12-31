@@ -50,6 +50,8 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_1, "InputTag.1", "Input Tag for 1 key");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_2, "InputTag.2", "Input Tag for 2 key");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_3, "InputTag.3", "Input Tag for 3 key");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_4, "InputTag.4", "Input Tag for 4 key");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Passive_1, "InputTag.Passive.1", "Input Tag for Passive 1, for Idenification");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Passive_2, "InputTag.Passive.2", "Input Tag for Passive 2, for Idenification");
 
 // Damage Types
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage_DefaultType, "Damage.DefaultType", "Default Damage Type Tag. Usually for Set by Caller Magnitude");
@@ -63,9 +65,23 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Effect_HitReact, "Effect.HitReact", "Tag Granted 
 
 // Abilities
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Default, "Ability.Default", "Default Ability Tag, used to get parent tag via RequestDirectParent");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_None, "Ability.None", "An unassigned/empty Ability");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Attack, "Ability.Attack", "Attack Ability");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Summon, "Ability.Summon", "Summon Ability");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Fire_FireBolt, "Ability.Fire.FireBolt", "FireBolt Ability");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Lightning_LightningBolt, "Ability.Lightning.LightningBolt", "LightningBolt Ability");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_HitReact, "Ability.HitReact", "HitReact Ability");
+
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Status_Default, "Ability.Status.Default", "Default Ability Status, used to get parent tag via RequestDirectParent");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Status_Locked, "Ability.Status.Locked", "Locked Ability Status");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Status_Unlocked, "Ability.Status.Unlocked", "Unlocked Ability Status");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Status_Acquired, "Ability.Status.Acquired", "Acquired Ability Status, happens after spending skill point/s for an ability");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Status_Equipped, "Ability.Status.Equipped", "Equipped Ability Status");
+
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Type_Default, "Ability.Type.Default", "Default Ability Type, used to get parent tag via RequestDirectParent");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Type_None, "Ability.Type.None", "None Ability Type");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Type_Offensive, "Ability.Type.Offensive", "Offensive Ability Type");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Type_Passive, "Ability.Type.Passive", "Passive Ability Type");
 
 // Combat Sockets
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(CombatSocket_Weapon, "CombatSocket.Weapon", "Weapon CombatSocket");
@@ -81,6 +97,7 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Montage_Attack_4, "Montage.Attack.4", "Attack Mon
 
 // Cool Downs
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(CoolDown_Fire_FireBolt, "CoolDown.Fire.FireBolt", "FireBolt CoolDown Tag");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(CoolDown_Lightning_LightningBolt, "CoolDown.Lightning.LightningBolt", "LightningBolt CoolDown Tag");
 
 FAuraGameplayTags FAuraGameplayTags::AuraGameplayTags;
 

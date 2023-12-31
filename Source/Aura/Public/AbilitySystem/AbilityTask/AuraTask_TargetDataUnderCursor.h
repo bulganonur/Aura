@@ -18,7 +18,7 @@ class AURA_API UAuraTask_TargetDataUnderCursor : public UAbilityTask
 
 public:
 	/** When this function is called [usually in the editor], it sets the ability which calls this as its owner */
-	UFUNCTION(BlueprintCallable, Category = "Ability | Tasks", meta = (DisplayName = "TargetDataUnderCursor", HidePin =  "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
+	UFUNCTION(BlueprintCallable, Category = "Ability | Tasks", meta = (DisplayName = "TargetDataUnderCursor", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
 	static UAuraTask_TargetDataUnderCursor* CreateTargetDataUnderCursorProxy(UGameplayAbility* OwningAbility);
 
 	/** This will be an execution pin in the editor for the function TargetDataUnderCursor [CreateTargetDataUnderCursorProxy] */

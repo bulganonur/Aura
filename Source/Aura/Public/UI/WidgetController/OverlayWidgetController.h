@@ -6,11 +6,7 @@
 #include "UI/WidgetController/AuraWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
-class UAbilityInfo;
 class UAuraUserWidget;
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChange, const float, NewValue);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfo, const FAuraAbilityInfo&, Info);
 
 USTRUCT(BlueprintType)
 struct FUIWidgetRow : public FTableRowBase
@@ -30,6 +26,7 @@ struct FUIWidgetRow : public FTableRowBase
 	TObjectPtr<UTexture2D> Image = nullptr;
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChange, const float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRow, const FUIWidgetRow&, WidgetRow);
 
 /**
@@ -60,9 +57,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS | Messages")
 	FMessageWidgetRow MessageWidgetRow;
 
-	UPROPERTY(BlueprintAssignable, Category = "GAS | Messages")
-	FAbilityInfo AbilityInfoDelegate;
-
 	/** fyi: XP is not an Attribute, using this signature for convenience */
 	UPROPERTY(BlueprintAssignable, Category = "GAS | PlayerStats")
 	FOnAttributeChange OnXPChangeDelegate;
@@ -74,12 +68,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
+	
+	void OnXPChange(const int32 NewXP);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
-	TObjectPtr<UAbilityInfo> AbilityInfo;
-
-	void OnStartupAbilitiesGiven();
-	void OnXPChange(const int32 NewXP) const;
+	void OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, const FGameplayTag& InputTag, const FGameplayTag& OldInputTag) const;
 
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);

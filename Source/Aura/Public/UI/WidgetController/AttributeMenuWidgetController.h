@@ -6,7 +6,6 @@
 #include "UI/WidgetController/AuraWidgetController.h"
 #include "AttributeMenuWidgetController.generated.h"
 
-
 class UAttributeInfo;
 struct FAuraAttributeInfo;
 
@@ -32,9 +31,6 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS | Stats")
 	FOnPlayerStatChange OnAttributePointChange;
-
-	UPROPERTY(BlueprintAssignable, Category = "GAS | Stats")
-	FOnPlayerStatChange OnSpellPointChange;
 
 	UFUNCTION(BlueprintCallable)
 	void SetAttributeValueByTag(const FGameplayTag& AttributeTag);

@@ -46,7 +46,6 @@ public:
 
 protected:
 	
-
 	virtual void InitAbilityActorInfo() override;
 
 private:

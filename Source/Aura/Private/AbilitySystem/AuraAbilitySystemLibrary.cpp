@@ -2,7 +2,6 @@
 
 
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
-
 #include "AuraAbilitySystemTypes.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Game/AuraGameModeBase.h"
@@ -34,8 +33,7 @@ UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(
 	return nullptr;
 }
 
-UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidgetController(
-	const UObject* WorldContextObject)
+UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidgetController(const UObject* WorldContextObject)
 {
 	// this might be a better way to get the PlayerController for multiplayer
 	/*APlayerController* PC = UWorld::GetFirstPlayerController();*/
@@ -52,6 +50,28 @@ UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidge
 			const FWidgetControllerParams WCParams(PC, PS, ASC, ASet);
 			
 			return AuraHUD->GetAttributeMenuWidgetController(WCParams);
+		}
+	}
+	return nullptr;
+}
+
+USpellMenuWidgetController* UAuraAbilitySystemLibrary::GetSpellMenuWidgetController(const UObject* WorldContextObject)
+{
+	// this might be a better way to get the PlayerController for multiplayer
+	/*APlayerController* PC = UWorld::GetFirstPlayerController();*/
+
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	{
+		AAuraHUD* AuraHUD = PC->GetHUD<AAuraHUD>();
+		AAuraPlayerState* PS = PC->GetPlayerState<AAuraPlayerState>();
+
+		if (AuraHUD && PS)
+		{
+			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
+			UAttributeSet* ASet = PS->GetAttributeSet();
+			const FWidgetControllerParams WCParams(PC, PS, ASC, ASet);
+			
+			return AuraHUD->GetSpellMenuWidgetController(WCParams);
 		}
 	}
 	return nullptr;
@@ -108,7 +128,15 @@ UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObj
 	{
 		return AuraGM->CharacterClassInfo;
 	}
+	return nullptr;
+}
 
+UAbilityInfo* UAuraAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldContextObject)
+{
+	if (const AAuraGameModeBase* AuraGM = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject)))
+	{
+		return AuraGM->AbilityInfo;
+	}
 	return nullptr;
 }
 
@@ -118,7 +146,6 @@ bool UAuraAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle&
 	{
 		return AuraEffectContext->IsBlockedHit();
 	}
-
 	return false;
 }
 
@@ -128,7 +155,6 @@ bool UAuraAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle
 	{
 		return AuraEffectContext->IsCriticalHit();
 	}
-
 	return false;
 }
 

@@ -2,7 +2,6 @@
 
 
 #include "AbilitySystem/Ability/AuraDamageGameplayAbility.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 
@@ -19,4 +18,9 @@ void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 
 	// Apply GameplayEffect
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*GESpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+}
+
+float UAuraDamageGameplayAbility::GetDamageByDamageType(const FGameplayTag& DamageTypeTag, const float InLevel) const
+{
+	return DamageTypes[DamageTypeTag].GetValueAtLevel(InLevel);
 }

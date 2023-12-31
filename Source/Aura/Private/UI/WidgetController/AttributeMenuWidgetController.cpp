@@ -11,25 +11,23 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 {
 	// Super::BroadcastInitialValues();
 
-	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
-	
-	for (const auto& Map : AuraAttributeSet->TagsToAttributes)
+	if (GetAuraAttributeSet())
 	{
-		BroadcastAttributeInfo(Map.Key, Map.Value());
+		for (const auto& Map : AuraAttributeSet->TagsToAttributes)
+		{
+			BroadcastAttributeInfo(Map.Key, Map.Value());
+		}
 	}
-
-	const AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(PlayerState);
-	if (!AuraPlayerState) { return; }
 	
+	if (!GetAuraPlayerState()) { return; }
 	OnAttributePointChange.Broadcast(AuraPlayerState->GetAttributePoints());
-	OnSpellPointChange.Broadcast(AuraPlayerState->GetSpellPoints());
 }
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
 	// Super::BindCallbacksToDependencies();
 
-	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
+	check(GetAuraAttributeSet());
 	
 	for (const auto& Map : AuraAttributeSet->TagsToAttributes)
 	{
@@ -39,27 +37,18 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 				BroadcastAttributeInfo(Map.Key, Map.Value());
 			});
 	}
-
-	AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(PlayerState);
-	if (!AuraPlayerState) { return; }
+	
+	if (!GetAuraPlayerState()) { return; }
 
 	AuraPlayerState->OnAttributePointChangeDelegate.AddLambda([this](const int32 StatValue)
 	{
 		OnAttributePointChange.Broadcast(StatValue);
 	});
-
-	AuraPlayerState->OnSpellPointChangeDelegate.AddLambda([this](const int32 StatValue)
-	{
-		OnSpellPointChange.Broadcast(StatValue);
-	});
-	
 }
 
 void UAttributeMenuWidgetController::SetAttributeValueByTag(const FGameplayTag& AttributeTag)
 {
-	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
-	if (!AuraASC) { return; }
-
+	if (!GetAuraAbilitySystemComponent()) { return; }
 	AuraASC->SetAttributeValueByTag(AttributeTag);
 }
 

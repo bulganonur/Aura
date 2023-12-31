@@ -83,6 +83,11 @@ void AAuraCharacter::LevelUp_Implementation(const int32 InLevel)
 	AuraPlayerState->AddToAttributePoints(AttributePointReward);
 	AuraPlayerState->AddToSpellPoints(SpellPointReward);
 
+	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		AuraASC->SetAbilityStatusTagsByLevel(CurrentLevel + InLevel);
+	}
+
 	MulticastLevelUp();
 }
 

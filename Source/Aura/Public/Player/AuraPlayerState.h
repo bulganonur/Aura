@@ -45,6 +45,7 @@ public:
 	void AddToLevel(const int32 InLevel);
 	void AddToXP(const int32 InXP);
 	void AddToAttributePoints(const int32 InAttributePoints);
+	UFUNCTION(BlueprintCallable)
 	void AddToSpellPoints(const int32 InSpellPoints);
 
 	FOnPlayerStatChangeSignature OnXPChangeDelegate;

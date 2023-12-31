@@ -7,6 +7,11 @@
 #include "Actor/AuraProjectile.h"
 #include "Interaction/CombatInterface.h"
 
+UAuraProjectileSpell::UAuraProjectileSpell()
+{
+	NumProjectiles = 5;
+}
+
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                            const FGameplayAbilityActorInfo* ActorInfo,
                                            const FGameplayAbilityActivationInfo ActivationInfo,
