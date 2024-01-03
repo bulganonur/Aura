@@ -2,11 +2,10 @@
 
 
 #include "AbilitySystem/Ability/AuraFireBolt.h"
-#include "AuraGameplayTags.h"
 
 FString UAuraFireBolt::GetDescriptionByLevel(const int32 AbilityLevel)
 {
-	const int32 Damage = GetDamageByDamageType(Damage_Fire, AbilityLevel);
+	const int32 ScaledDamage = Damage.GetValueAtLevel(AbilityLevel);
 	const float ManaCost = GetManaCostByLevel(AbilityLevel);
 	const float Cooldown = GetCooldownByLevel(AbilityLevel);
 	
@@ -23,7 +22,7 @@ FString UAuraFireBolt::GetDescriptionByLevel(const int32 AbilityLevel)
 			"\n\n"
 			"<Default>Launches a bolt of fire, exploding on impact and dealing </>"
 			"<Damage>%i</><Default> fire damage with a chance to burn</>" // Damage
-			), AbilityLevel, FMath::Abs(ManaCost), Cooldown, Damage);
+			), AbilityLevel, FMath::Abs(ManaCost), Cooldown, ScaledDamage);
 	}
 	return FString::Printf(TEXT(
 		"<Title>FIRE BOLT</>"
@@ -36,12 +35,12 @@ FString UAuraFireBolt::GetDescriptionByLevel(const int32 AbilityLevel)
 		"\n\n"
 		"<Default>Launches %i bolts of fire, exploding on impact and dealing </>" // NumProjectiles
 		"<Damage>%i</><Default> fire damage with a chance to burn</>" // Damage
-		), AbilityLevel, FMath::Abs(ManaCost), Cooldown, FMath::Min(AbilityLevel, NumProjectiles), Damage);
+		), AbilityLevel, FMath::Abs(ManaCost), Cooldown, FMath::Min(AbilityLevel, NumProjectiles), ScaledDamage);
 }
 
 FString UAuraFireBolt::GetDescriptionByNextLevel(const int32 AbilityLevel)
 {
-	const int32 Damage = GetDamageByDamageType(Damage_Fire, AbilityLevel);
+	const int32 ScaledDamage = Damage.GetValueAtLevel(AbilityLevel);
 	const float ManaCost = GetManaCostByLevel(AbilityLevel);
 	const float Cooldown = GetCooldownByLevel(AbilityLevel);
 	
@@ -56,5 +55,5 @@ FString UAuraFireBolt::GetDescriptionByNextLevel(const int32 AbilityLevel)
 		"\n\n"
 		"<Default>Launches %i bolts of fire, exploding on impact and dealing </>" // NumProjectiles
 		"<Damage>%i</><Default> fire damage with a chance to burn</>" // Damage
-		), AbilityLevel, FMath::Abs(ManaCost), Cooldown, FMath::Min(AbilityLevel, NumProjectiles), Damage);
+		), AbilityLevel, FMath::Abs(ManaCost), Cooldown, FMath::Min(AbilityLevel, NumProjectiles), ScaledDamage);
 }

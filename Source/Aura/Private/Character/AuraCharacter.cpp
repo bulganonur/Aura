@@ -137,6 +137,9 @@ void AAuraCharacter::InitAbilityActorInfo()
 	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
 	AttributeSet = AuraPlayerState->GetAttributeSet();
 
+	// Broadcast ASC is valid
+	OnAscRegisteredDelegate.Broadcast(AbilitySystemComponent);
+
 	// Initialize Ability Actor Info and Call PostInit
 	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AuraPlayerState->GetAbilitySystemComponent());
 	AuraASC->InitAbilityActorInfo(AuraPlayerState, this);

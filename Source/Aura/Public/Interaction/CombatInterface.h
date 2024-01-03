@@ -7,8 +7,12 @@
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
 
+class UAbilitySystemComponent;
 enum class ECharacterClass : uint8;
 class UNiagaraSystem;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, UAbilitySystemComponent* /** ASC */);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCombatActorsDeath, AActor*, DeadActor);
 
 USTRUCT(BlueprintType)
 struct FTaggedMontage
@@ -47,8 +51,6 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	int32 GetAuraLevel() const;
-
-	virtual void Die() = 0;
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	FVector GetCombatSocketLocation(const FGameplayTag& SocketTag) const;
@@ -82,4 +84,8 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	ECharacterClass GetCharacterClass() const;
+
+	virtual void Die(const FVector& DeathImpulse) = 0;
+	virtual FOnASCRegistered GetOnASCRegisteredDelegate() = 0;
+	virtual FOnCombatActorsDeath GetOnCombatActorsDeathDelegate() = 0;
 };

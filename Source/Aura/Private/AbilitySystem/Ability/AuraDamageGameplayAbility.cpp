@@ -5,22 +5,36 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 
-void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
+FAuraDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
 {
-	const FGameplayEffectSpecHandle& GESpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
-
-	// Setup GameplayEffect
-	for (const auto& Map : DamageTypes)
-	{
-		const float ScaledDamage = Map.Value.GetValueAtLevel(GetAbilityLevel());
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GESpecHandle, Map.Key, ScaledDamage);
-	}
-
-	// Apply GameplayEffect
-	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*GESpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+	FAuraDamageEffectParams Params;
+	
+	Params.WorldContextObject = GetAvatarActorFromActorInfo();
+	Params.SourceASC = GetAbilitySystemComponentFromActorInfo();
+	Params.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	Params.DamageEffectClass = DamageEffectClass;
+	Params.DamageType = DamageType;
+	Params.AbilityLevel = GetAbilityLevel();
+	Params.Damage = Damage.GetValueAtLevel(GetAbilityLevel());
+	Params.DebuffChance = DebuffChance;
+	Params.DebuffDamage = DebuffDamage;
+	Params.DebuffDuration = DebuffDuration;
+	Params.DebuffPeriod = DebuffPeriod;
+	Params.DeathImpulseMagnitude = DeathImpulseMagnitude;
+	Params.KnockbackForceMagnitude = KnockbackForceMagnitude;
+	Params.KnockbackChance = KnockbackChance;
+	return Params;
 }
 
-float UAuraDamageGameplayAbility::GetDamageByDamageType(const FGameplayTag& DamageTypeTag, const float InLevel) const
+void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
-	return DamageTypes[DamageTypeTag].GetValueAtLevel(InLevel);
+	// Setup GameplayEffect
+	const FGameplayEffectSpecHandle& GESpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
+
+	// AssignTagSetByCaller
+	const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GESpecHandle, DamageType, ScaledDamage);
+	
+	// Apply GameplayEffect
+	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*GESpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 }

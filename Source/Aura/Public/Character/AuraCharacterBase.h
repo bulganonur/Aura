@@ -8,6 +8,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UDebuffNiagaraComponent;
 class UNiagaraSystem;
 class UGameplayAbility;
 class UGameplayEffect;
@@ -27,14 +28,17 @@ public:
 	UAttributeSet* GetAttributeSet () const;
 
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastHandleDeath();
-	
+	virtual void MulticastHandleDeath(const FVector& DeathImpulse);
+
 protected:
 	
 	virtual void BeginPlay() override;
 
 	// InitializeAndSetLotsOfThings @todo: rename or refactor
 	virtual void InitAbilityActorInfo();
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Debuff")
+	TObjectPtr<UDebuffNiagaraComponent> DebuffNiagaraComp;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
@@ -57,7 +61,7 @@ protected:
 	
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& SocketTag) const override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
-	virtual void Die() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
@@ -65,11 +69,16 @@ protected:
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& Tag) const override;
 	virtual int32 GetMinionCount_Implementation() const override;
 	virtual void SetMinionCount_Implementation(const int32 Count) override;
+	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
+	virtual FOnCombatActorsDeath GetOnCombatActorsDeathDelegate() override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
 
 	int32 MinionCount;
+
+	FOnASCRegistered OnAscRegisteredDelegate;
+	FOnCombatActorsDeath OnCombatActorsDeathDelegate;
 	
 	//~ End Combat Interface
 	

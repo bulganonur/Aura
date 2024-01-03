@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -23,6 +24,10 @@ AAuraCharacterBase::AAuraCharacterBase()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMesh");
 	Weapon->SetupAttachment(GetMesh(), "WeaponHandSocket");
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	DebuffNiagaraComp = CreateDefaultSubobject<UDebuffNiagaraComponent>("DebuffNiagaraComp");
+	DebuffNiagaraComp->SetupAttachment(GetRootComponent());
+	DebuffNiagaraComp->DebuffTag = Debuff_Burn;
 
 	bIsDead = false;
 	MinionCount = 0;
@@ -43,16 +48,18 @@ UAttributeSet* AAuraCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
-void AAuraCharacterBase::MulticastHandleDeath_Implementation()
+void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	Weapon->AddImpulse(DeathImpulse, NAME_None, true);
 
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetEnableGravity(true);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	GetMesh()->AddImpulse(DeathImpulse, NAME_None, true);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
@@ -61,6 +68,7 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	Dissolve();
 
 	bIsDead = true;
+	OnCombatActorsDeathDelegate.Broadcast(this);
 }
 
 FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& SocketTag) const
@@ -90,10 +98,10 @@ UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation() const
 	return HitReactMontage;
 }
 
-void AAuraCharacterBase::Die()
+void AAuraCharacterBase::Die(const FVector& DeathImpulse)
 {
 	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
-	MulticastHandleDeath();
+	MulticastHandleDeath(DeathImpulse);
 }
 
 bool AAuraCharacterBase::IsDead_Implementation() const
@@ -136,6 +144,16 @@ int32 AAuraCharacterBase::GetMinionCount_Implementation() const
 void AAuraCharacterBase::SetMinionCount_Implementation(const int32 Count)
 {
 	MinionCount = Count;
+}
+
+FOnASCRegistered AAuraCharacterBase::GetOnASCRegisteredDelegate()
+{
+	return OnAscRegisteredDelegate;
+}
+
+FOnCombatActorsDeath AAuraCharacterBase::GetOnCombatActorsDeathDelegate()
+{
+	return OnCombatActorsDeathDelegate;
 }
 
 void AAuraCharacterBase::InitAbilityActorInfo()

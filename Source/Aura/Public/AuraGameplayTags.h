@@ -86,6 +86,21 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Arcane);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Physical);
 
 /**
+ * DEBUFFS
+ */
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Debuff_Default);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Debuff_Burn);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Debuff_Stun);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Debuff_Arcane);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Debuff_Physical);
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Debuff_Chance);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Debuff_Damage);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Debuff_Duration);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Debuff_Period);
+
+/**
  * EFFECTS
  */
 
@@ -153,6 +168,7 @@ struct FAuraGameplayTags
 
  FGameplayTagContainer AuraAllTagsContainer;
  TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+ TMap<FGameplayTag, FGameplayTag> DamageTypesToDebuffs;
  
 private:
  static FAuraGameplayTags AuraGameplayTags;

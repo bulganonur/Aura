@@ -38,7 +38,8 @@ AAuraEnemy::AAuraEnemy()
 	Level = 1;
 	bHitReacting = false;
 	BaseWalkSpeed = 250.0f;
-	AfterDeathLifeSpan = 5.0f;
+	AfterDeathLifeSpan = 3.0f;
+	
 }
 
 void AAuraEnemy::PossessedBy(AController* NewController)
@@ -104,6 +105,7 @@ void AAuraEnemy::InitAbilityActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->PostInitAbilityActorInfo();
+	OnAscRegisteredDelegate.Broadcast(AbilitySystemComponent);
 
 	if (HasAuthority())
 	{
@@ -143,14 +145,14 @@ int32 AAuraEnemy::GetAuraLevel_Implementation() const
 	return Level;
 }
 
-void AAuraEnemy::Die()
+void AAuraEnemy::Die(const FVector& DeathImpulse)
 {
 	SetLifeSpan(AfterDeathLifeSpan);
 	if (AuraAIController)
 	{
 		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsDead"), true);
 	}
-	Super::Die();
+	Super::Die(DeathImpulse);
 }
 
 ECharacterClass AAuraEnemy::GetCharacterClass_Implementation() const

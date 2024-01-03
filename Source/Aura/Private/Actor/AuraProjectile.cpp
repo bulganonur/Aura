@@ -9,6 +9,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura/Aura.h"
 #include "Components/AudioComponent.h"
 
@@ -70,10 +71,8 @@ void AAuraProjectile::Destroyed()
 void AAuraProjectile::OnSphereCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor == GetInstigator())
-	{
-		return;
-	}
+	if (OtherActor == GetInstigator()) { return; }
+	
 	if (!bHasServerHitHappened)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, Impact_SFX, GetActorLocation());
@@ -83,12 +82,12 @@ void AAuraProjectile::OnSphereCompBeginOverlap(UPrimitiveComponent* OverlappedCo
 	
 	if (HasAuthority()) // for server, carry on. everything happens as expected
 	{
-		UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetInstigator());
-		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
+		DamageEffectParams.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
+		DamageEffectParams.DeathImpulse = DamageEffectParams.DeathImpulseMagnitude * GetActorForwardVector();
 		
-		if (SourceASC && TargetASC)
+		if (DamageEffectParams.SourceASC && DamageEffectParams.TargetASC)
 		{
-			SourceASC->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data.Get(), TargetASC);
+			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 		}
 		
 		Destroy();

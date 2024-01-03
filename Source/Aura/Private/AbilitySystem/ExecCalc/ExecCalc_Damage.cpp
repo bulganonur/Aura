@@ -99,6 +99,38 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
+	// Debuff
+	const FAuraGameplayTags& AuraTags = FAuraGameplayTags::Get();
+	for (TTuple<FGameplayTag, FGameplayTag> Pair : AuraTags.DamageTypesToDebuffs)
+	{
+		float EffectMagnitude = GESpec.GetSetByCallerMagnitude(Pair.Key, false, -1.0f);
+		if (EffectMagnitude > -0.5f) // .5 padding for floating point [im]precision
+		{
+			const float SourceDebuffChance = GESpec.GetSetByCallerMagnitude(Debuff_Chance, false, -1);
+
+			const FGameplayTag& ResistanceTag = AuraTags.DamageTypesToResistances[Pair.Key];
+			float TargetDebuffResistance;
+			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TagsToCaptureDefs[ResistanceTag], EvaluationParameters, OUT TargetDebuffResistance);
+			TargetDebuffResistance = FMath::Max(0.0f, TargetDebuffResistance);
+
+			const float EffectiveDebuffChance = SourceDebuffChance * (100.0f - TargetDebuffResistance) / 100.0f;
+			const bool bDebuff = FMath::RandRange(1, 100) < EffectiveDebuffChance;
+			if (bDebuff)
+			{
+				UAuraAbilitySystemLibrary::SetShouldApplyDebuff(GEContextHandle, true);
+				UAuraAbilitySystemLibrary::SetDamageType(GEContextHandle, Pair.Key);
+
+				const float DebuffDamage = GESpec.GetSetByCallerMagnitude(Debuff_Damage, false, -1);
+				const float DebuffDuration = GESpec.GetSetByCallerMagnitude(Debuff_Duration, false, -1);
+				const float DebuffPeriod = GESpec.GetSetByCallerMagnitude(Debuff_Period, false, -1);
+
+				UAuraAbilitySystemLibrary::SetDebuffDamage(GEContextHandle, DebuffDamage);
+				UAuraAbilitySystemLibrary::SetDebuffDuration(GEContextHandle, DebuffDuration);
+				UAuraAbilitySystemLibrary::SetDebuffPeriod(GEContextHandle, DebuffPeriod);
+			}
+		}
+	}
+	
 	// Actual damage of the effect
 	float Damage = 0.0f;
 	
@@ -178,12 +210,12 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	
 	// Get source's CriticalHitDamage Magnitude
 	float SourceCriticalHitDamage;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitChanceDef, EvaluationParameters, OUT SourceCriticalHitDamage);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitDamageDef, EvaluationParameters, OUT SourceCriticalHitDamage);
 	SourceCriticalHitDamage = FMath::Max<float>(SourceCriticalHitDamage, 0.0f);
 
-	// Get source's CriticalHitDamage Magnitude
+	// Get target's CriticalHitResistance Magnitude
 	float TargetCriticalHitResistance;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitChanceDef, EvaluationParameters, OUT TargetCriticalHitResistance);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitResistanceDef, EvaluationParameters, OUT TargetCriticalHitResistance);
 	TargetCriticalHitResistance = FMath::Max<float>(TargetCriticalHitResistance, 0.0f);
 
 	// Get CriticalHitResistance Coefficient from the CurveTable

@@ -60,6 +60,18 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage_Lightning, "Damage.Lightning", "Lightning 
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage_Arcane, "Damage.Arcane", "Arcane damage type");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage_Physical, "Damage.Physical", "Physical damage type");
 
+// Debuffs
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Debuff_Default, "Debuff.Default", "Default Debuff Tag. Can also be used as a None Tag");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Debuff_Burn, "Debuff.Burn", "Burn Debuff Tag, associated with Fire Damage Type");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Debuff_Stun, "Debuff.Stun", "Stun Debuff Tag, associated with Lightning Damage Type");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Debuff_Arcane, "Debuff.Arcane", "Arcane Debuff Tag");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Debuff_Physical, "Debuff.Physical", "Physical Debuff Tag");
+
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Debuff_Chance, "Debuff.Chance", "Apply chance of a Debuff");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Debuff_Damage, "Debuff.Damage", "Applied damage of a Debuff for each interval");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Debuff_Duration, "Debuff.Duration", "Total lifespan of a Debuff");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Debuff_Period, "Debuff.Period", "How often to apply a Debuff within its Duration");
+
 // Effects
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Effect_HitReact, "Effect.HitReact", "Tag Granted for hit reaction via GameplayEffect");
 
@@ -133,6 +145,12 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	AuraGameplayTags.DamageTypesToResistances.Add(Damage_Fire, Attribute_Secondary_FireResistance);
 	AuraGameplayTags.DamageTypesToResistances.Add(Damage_Lightning, Attribute_Secondary_LightningResistance);
 	AuraGameplayTags.DamageTypesToResistances.Add(Damage_Physical, Attribute_Secondary_PhysicalResistance);
+
+	// DamageTypes to Debuffs Map
+	AuraGameplayTags.DamageTypesToDebuffs.Add(Damage_Arcane, Debuff_Arcane);
+	AuraGameplayTags.DamageTypesToDebuffs.Add(Damage_Fire, Debuff_Burn);
+	AuraGameplayTags.DamageTypesToDebuffs.Add(Damage_Lightning, Debuff_Stun);
+	AuraGameplayTags.DamageTypesToDebuffs.Add(Damage_Physical, Debuff_Physical);
 
 }
 

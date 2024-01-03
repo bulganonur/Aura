@@ -5,6 +5,65 @@
 #include "GameplayEffectTypes.h"
 #include "AuraAbilitySystemTypes.generated.h"
 
+class UGameplayEffect;
+
+USTRUCT(BlueprintType)
+struct FAuraDamageEffectParams
+{
+	GENERATED_BODY()
+
+	FAuraDamageEffectParams(){}
+
+	UPROPERTY()
+	TObjectPtr<UObject> WorldContextObject = nullptr;
+
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> SourceASC = nullptr;
+
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> TargetASC = nullptr;
+	
+	UPROPERTY()
+	TSubclassOf<UGameplayEffect> DamageEffectClass = nullptr;
+	
+	UPROPERTY()
+	FGameplayTag DamageType = FGameplayTag();
+
+	UPROPERTY()
+	float AbilityLevel = 1.0f;
+	
+	UPROPERTY()
+	float Damage = 0.0f;
+
+	UPROPERTY()
+	float DebuffChance = 0.0f;
+
+	UPROPERTY()
+	float DebuffDamage = 0.0f;
+
+	UPROPERTY()
+	float DebuffDuration = 0.0f;
+
+	UPROPERTY()
+	float DebuffPeriod = 0.0f;
+
+	UPROPERTY()
+	float DeathImpulseMagnitude = 0.0f;
+	
+	UPROPERTY()
+	FVector DeathImpulse = FVector::ZeroVector;
+
+	UPROPERTY()
+	float KnockbackForceMagnitude = 0.0f;
+
+	UPROPERTY()
+	FVector KnockbackForce = FVector::ZeroVector;
+
+	UPROPERTY()
+	float KnockbackChance = 0.0f;
+	
+};
+
 /**
  * Custom GameplayEffectContext struct
  */
@@ -24,9 +83,24 @@ struct FAuraGameplayEffectContext : public FGameplayEffectContext
 
 	bool IsBlockedHit() const { return bIsBlockedHit; }
 	bool IsCriticalHit() const { return bIsCriticalHit; }
+	bool ShouldApplyDebuff() const { return bShouldApplyDebuff; }
+	float GetDebuffDamage() const { return DebuffDamage; }
+	float GetDebuffDuration() const { return DebuffDuration; }
+	float GetDebuffPeriod() const { return DebuffPeriod; }
+	TSharedPtr<FGameplayTag> GetDamageType() const { return DamageType; }
+	FVector GetDeathImpulse() const { return DeathImpulse; }
+	FVector GetKnockbackForce() const { return KnockbackForce; }
+
 	void SetIsBlockedHit(const bool InIsBlockedHit) { bIsBlockedHit = InIsBlockedHit; }
 	void SetIsCriticalHit(const bool InIsCriticalHit) { bIsCriticalHit = InIsCriticalHit; }
-	
+	void SetShouldApplyDebuff(const bool InShouldApplyDebuff) { bShouldApplyDebuff = InShouldApplyDebuff; }
+	void SetDebuffDamage(const float InDebuffDamage) { DebuffDamage = InDebuffDamage; }
+	void SetDebuffDuration(const float InDebuffDuration) { DebuffDuration = InDebuffDuration; }
+	void SetDebuffPeriod(const float InDebuffPeriod) { DebuffPeriod = InDebuffPeriod; }
+	void SetDamageType(const FGameplayTag& InDamageTypeTag);
+	void SetDeathImpulse(const FVector& InDeathImpulse) { DeathImpulse = InDeathImpulse; }
+	void SetKnockbackForce(const FVector& InKnockbackForce) { KnockbackForce = InKnockbackForce; }
+
 protected:
 
 	UPROPERTY()
@@ -34,6 +108,26 @@ protected:
 
 	UPROPERTY()
 	bool bIsCriticalHit = false;
+
+	UPROPERTY()
+	bool bShouldApplyDebuff = false;
+
+	UPROPERTY()
+	float DebuffDamage = 0.0f;
+
+	UPROPERTY()
+	float DebuffDuration = 0.0f;
+
+	UPROPERTY()
+	float DebuffPeriod = 0.0f;
+	
+	TSharedPtr<FGameplayTag> DamageType = nullptr;
+
+	UPROPERTY()
+	FVector DeathImpulse = FVector::ZeroVector;
+
+	UPROPERTY()
+	FVector KnockbackForce = FVector::ZeroVector;
 };
 
 template<>

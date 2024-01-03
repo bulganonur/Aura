@@ -63,6 +63,8 @@ private:
 	
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, OUT FEffectProperties& Props);
 	void SendXPEvent(const FEffectProperties& Props) const;
+	void HandleIncomingDamage(const FEffectProperties& Props);
+	void HandleIncomingXP(const FEffectProperties& Props);
 	
 	bool bTopOffHealth;
 	bool bTopOffMana;

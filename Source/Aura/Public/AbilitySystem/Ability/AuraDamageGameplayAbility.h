@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AuraAbilitySystemTypes.h"
 #include "AbilitySystem/Ability/AuraGameplayAbility.h"
 #include "AuraDamageGameplayAbility.generated.h"
 
@@ -16,15 +17,41 @@ class AURA_API UAuraDamageGameplayAbility : public UAuraGameplayAbility
 
 protected:
 
+	FAuraDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
+	
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* TargetActor);
-
-	float GetDamageByDamageType(const FGameplayTag& DamageTypeTag, const float InLevel) const;
-
+	
+public:
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	TMap<FGameplayTag, FScalableFloat> DamageTypes;
+	FGameplayTag DamageType;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	FScalableFloat Damage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Debuff")
+	float DebuffChance;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Debuff")
+	float DebuffDamage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Debuff")
+	float DebuffDuration;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Debuff")
+	float DebuffPeriod;
+
+	UPROPERTY(EditDefaultsOnly, Category = "oomph")
+	float DeathImpulseMagnitude;
+
+	UPROPERTY(EditDefaultsOnly, Category = "oomph")
+	float KnockbackChance;
+
+	UPROPERTY(EditDefaultsOnly, Category = "oomph")
+	float KnockbackForceMagnitude;
 	
 };

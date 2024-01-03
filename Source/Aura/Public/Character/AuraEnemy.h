@@ -38,7 +38,7 @@ public:
 	//~ Begin Combat Interface
 
 	virtual int32 GetAuraLevel_Implementation() const override;
-	virtual void Die() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() const override;
 	
 	//~ End Combat Interface
