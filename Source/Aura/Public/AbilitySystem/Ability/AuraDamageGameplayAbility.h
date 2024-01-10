@@ -21,13 +21,14 @@ protected:
 	
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* TargetActor);
-	
-public:
+
+	UFUNCTION(BlueprintPure)
+	float GetDamageAtLevel() const;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	FGameplayTag DamageType;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")

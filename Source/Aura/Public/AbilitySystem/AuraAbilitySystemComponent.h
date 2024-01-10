@@ -37,7 +37,7 @@ public:
 	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
 	void AbilityInputTagHeld(const FGameplayTag& Tag);
 	void AbilityInputTagReleased(const FGameplayTag& Tag);
-
+	void AbilityInputTagPressed(const FGameplayTag& Tag);
 
 	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);

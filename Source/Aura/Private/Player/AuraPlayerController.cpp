@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/SplineComponent.h"
 #include "Input/AuraInputComponent.h"
@@ -158,6 +159,8 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag Tag)
 		bTargetingEnemy = CurrentActor ? true : false;
 		bAutoRunning = false;
 	}
+
+	GetAbilitySystemComponent()->AbilityInputTagPressed(Tag);
 }
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
@@ -197,6 +200,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
 				}
 				CachedDestination = NavPath->PathPoints.IsEmpty() ? CachedDestination : NavPath->PathPoints.Last();
 				bAutoRunning = NavPath->PathPoints.IsEmpty() ? false : true;
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
 			}	
 		}
 		FollowTime = 0.0f;

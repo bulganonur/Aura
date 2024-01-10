@@ -38,3 +38,8 @@ void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 	// Apply GameplayEffect
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*GESpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 }
+
+float UAuraDamageGameplayAbility::GetDamageAtLevel() const
+{
+	return Damage.GetValueAtLevel(GetAbilityLevel());
+}

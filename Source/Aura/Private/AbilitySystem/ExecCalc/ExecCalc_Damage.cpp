@@ -84,6 +84,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	// Get AvatarActors
 	const AActor* SourceAvatar = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
 	const AActor* TargetAvatar = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
+
+	if (!SourceASC || !TargetASC) { return; }
 	
 	// Get GameplayEffectSpec
 	const FGameplayEffectSpec& GESpec = ExecutionParams.GetOwningSpec();

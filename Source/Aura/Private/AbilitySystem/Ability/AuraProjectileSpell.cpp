@@ -25,11 +25,10 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& TargetLocation, const 
 {
 	/*const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();*/
 	const bool bIsServer = HasAuthority(&GetCurrentActivationInfoRef());
-	
 	if (!bIsServer) { return; }
 	
 	const FVector SpawnLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), SocketTag);
-	const FRotator SpawnRotation = (TargetLocation - SpawnLocation).Rotation();
+	const FRotator SpawnRotation = (TargetLocation - SpawnLocation).ToOrientationRotator();
 
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(SpawnLocation);

@@ -81,7 +81,7 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_None, "Ability.None", "An unassigned/empt
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Attack, "Ability.Attack", "Attack Ability");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Summon, "Ability.Summon", "Summon Ability");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Fire_FireBolt, "Ability.Fire.FireBolt", "FireBolt Ability");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Lightning_LightningBolt, "Ability.Lightning.LightningBolt", "LightningBolt Ability");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Lightning_Beam, "Ability.Lightning.Beam", "Beam Ability");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_HitReact, "Ability.HitReact", "HitReact Ability");
 
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Status_Default, "Ability.Status.Default", "Default Ability Status, used to get parent tag via RequestDirectParent");
@@ -109,7 +109,7 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Montage_Attack_4, "Montage.Attack.4", "Attack Mon
 
 // Cool Downs
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(CoolDown_Fire_FireBolt, "CoolDown.Fire.FireBolt", "FireBolt CoolDown Tag");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(CoolDown_Lightning_LightningBolt, "CoolDown.Lightning.LightningBolt", "LightningBolt CoolDown Tag");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(CoolDown_Lightning_Beam, "CoolDown.Lightning.Beam", "Beam CoolDown Tag");
 
 FAuraGameplayTags FAuraGameplayTags::AuraGameplayTags;
 

@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "Aura/AuraLogChannels.h"
 #include "Interaction/CombatInterface.h"
 
 UDebuffNiagaraComponent::UDebuffNiagaraComponent()
@@ -15,8 +16,12 @@ UDebuffNiagaraComponent::UDebuffNiagaraComponent()
 void UDebuffNiagaraComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetOwner());
+	if (CombatInterface)
+	{
+		CombatInterface->GetOnCombatActorsDeathDelegate().AddDynamic(this, &UDebuffNiagaraComponent::OnOwnerDeath);
+	}
 	
 	if (UAbilitySystemComponent* OwnerASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner()))
 	{
@@ -30,10 +35,6 @@ void UDebuffNiagaraComponent::BeginPlay()
 		});
 	}
 
-	if (CombatInterface)
-	{
-		CombatInterface->GetOnCombatActorsDeathDelegate().AddDynamic(this, &UDebuffNiagaraComponent::OnOwnerDeath);
-	}
 }
 
 void UDebuffNiagaraComponent::TickComponent(float DeltaTime, ELevelTick TickType,

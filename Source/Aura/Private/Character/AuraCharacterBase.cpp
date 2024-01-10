@@ -8,6 +8,7 @@
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 AAuraCharacterBase::AAuraCharacterBase()
@@ -26,7 +27,7 @@ AAuraCharacterBase::AAuraCharacterBase()
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	DebuffNiagaraComp = CreateDefaultSubobject<UDebuffNiagaraComponent>("DebuffNiagaraComp");
-	DebuffNiagaraComp->SetupAttachment(GetRootComponent());
+	DebuffNiagaraComp->SetupAttachment(GetMesh());
 	DebuffNiagaraComp->DebuffTag = Debuff_Burn;
 
 	bIsDead = false;
@@ -50,6 +51,7 @@ UAttributeSet* AAuraCharacterBase::GetAttributeSet() const
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {
+	
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
@@ -67,8 +69,8 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& Deat
 
 	Dissolve();
 
-	bIsDead = true;
 	OnCombatActorsDeathDelegate.Broadcast(this);
+	bIsDead = true;
 }
 
 FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& SocketTag) const
@@ -146,14 +148,29 @@ void AAuraCharacterBase::SetMinionCount_Implementation(const int32 Count)
 	MinionCount = Count;
 }
 
-FOnASCRegistered AAuraCharacterBase::GetOnASCRegisteredDelegate()
+FOnASCRegistered& AAuraCharacterBase::GetOnASCRegisteredDelegate()
 {
 	return OnAscRegisteredDelegate;
 }
 
-FOnCombatActorsDeath AAuraCharacterBase::GetOnCombatActorsDeathDelegate()
+FOnCombatActorsDeath& AAuraCharacterBase::GetOnCombatActorsDeathDelegate()
 {
 	return OnCombatActorsDeathDelegate;
+}
+
+void AAuraCharacterBase::SetMovementDisabled_Implementation()
+{
+	GetCharacterMovement()->DisableMovement();
+}
+
+void AAuraCharacterBase::SetMovementEnabled_Implementation()
+{
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+}
+
+USkeletalMeshComponent* AAuraCharacterBase::GetWeapon_Implementation()
+{
+	return Weapon;
 }
 
 void AAuraCharacterBase::InitAbilityActorInfo()

@@ -4,7 +4,6 @@
 #include "Actor/AuraProjectile.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -40,6 +39,11 @@ AAuraProjectile::AAuraProjectile()
 	bHasServerHitHappened = false;
 }
 
+UProjectileMovementComponent* AAuraProjectile::GetProjectileMoveComp() const
+{
+	return ProjectileMoveComp;
+}
+
 void AAuraProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -50,6 +54,7 @@ void AAuraProjectile::PostInitializeComponents()
 void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+	SetReplicateMovement(true);
 	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
 	SetLifeSpan(LifeSpan);
 	UGameplayStatics::PlaySoundAtLocation(this, Cast_SFX, GetActorLocation());

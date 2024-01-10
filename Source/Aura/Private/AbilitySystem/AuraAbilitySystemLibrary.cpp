@@ -334,6 +334,46 @@ int32 UAuraAbilitySystemLibrary::GetXPRewardByClassAndLevel(const UObject* World
 	return CharacterClassInfo ? CharacterClassInfo->GetClassDefaultInfo(CharacterClass).XPRewards.GetValueAtLevel(EnemyLevel) : 0;
 }
 
+TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(const FVector& ForwardVector, const FVector& Axis, float SpreadAngle, int32 SpreadNum)
+{
+	TArray<FRotator> Spreads;
+	if (SpreadNum > 1)
+	{
+		const float DeltaSpread = SpreadAngle / (SpreadNum - 1); // Angle between each spread
+		const FVector LeftSpread = ForwardVector.RotateAngleAxis(-SpreadAngle * 0.5f, Axis); // Initial spread/angle
+		for (int i = 0; i < SpreadNum; ++i)
+		{
+			const FVector Spread = LeftSpread.RotateAngleAxis(DeltaSpread * i, FVector::ZAxisVector);
+			Spreads.Add(Spread.ToOrientationRotator());
+		}
+	}
+	else
+	{
+		Spreads.Add(ForwardVector.ToOrientationRotator());
+	}
+	return Spreads;
+}
+
+TArray<FVector> UAuraAbilitySystemLibrary::EvenlySpacedVectors(const FVector& ForwardVector, const FVector& Axis, float SpreadAngle, int32 SpreadNum)
+{
+	TArray<FVector> Spreads;
+	if (SpreadNum > 1)
+	{
+		const float DeltaSpread = SpreadAngle / (SpreadNum - 1); // Angle between each spread
+		const FVector LeftSpread = ForwardVector.RotateAngleAxis(-SpreadAngle * 0.5f, Axis); // Initial spread/angle
+		for (int i = 0; i < SpreadNum; ++i)
+		{
+			const FVector Spread = LeftSpread.RotateAngleAxis(DeltaSpread * i, FVector::ZAxisVector);
+			Spreads.Add(Spread);
+		}
+	}
+	else
+	{
+		Spreads.Add(ForwardVector);
+	}
+	return Spreads;
+}
+
 FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const FAuraDamageEffectParams& EffectParams)
 {
 	// Setup GameplayEffect

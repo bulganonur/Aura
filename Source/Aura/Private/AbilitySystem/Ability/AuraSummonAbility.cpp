@@ -2,7 +2,6 @@
 
 
 #include "AbilitySystem/Ability/AuraSummonAbility.h"
-#include "Kismet/KismetSystemLibrary.h"
 
 TArray<FVector> UAuraSummonAbility::GetSpawnLocations() const
 {

@@ -85,7 +85,19 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	ECharacterClass GetCharacterClass() const;
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetIsInShockLoop(bool bIsInLoop);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetMovementDisabled();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetMovementEnabled();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	USkeletalMeshComponent* GetWeapon();
+	
 	virtual void Die(const FVector& DeathImpulse) = 0;
-	virtual FOnASCRegistered GetOnASCRegisteredDelegate() = 0;
-	virtual FOnCombatActorsDeath GetOnCombatActorsDeathDelegate() = 0;
+	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() = 0;
+	virtual FOnCombatActorsDeath& GetOnCombatActorsDeathDelegate() = 0;
 };

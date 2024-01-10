@@ -38,7 +38,7 @@ AAuraEnemy::AAuraEnemy()
 	Level = 1;
 	bHitReacting = false;
 	BaseWalkSpeed = 250.0f;
-	AfterDeathLifeSpan = 3.0f;
+	AfterDeathLifeSpan = 2.75f;
 	
 }
 

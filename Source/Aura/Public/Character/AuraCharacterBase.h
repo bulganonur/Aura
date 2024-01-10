@@ -69,8 +69,11 @@ protected:
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& Tag) const override;
 	virtual int32 GetMinionCount_Implementation() const override;
 	virtual void SetMinionCount_Implementation(const int32 Count) override;
-	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
-	virtual FOnCombatActorsDeath GetOnCombatActorsDeathDelegate() override;
+	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
+	virtual FOnCombatActorsDeath& GetOnCombatActorsDeathDelegate() override;
+	virtual void SetMovementDisabled_Implementation() override;
+	virtual void SetMovementEnabled_Implementation() override;
+	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;

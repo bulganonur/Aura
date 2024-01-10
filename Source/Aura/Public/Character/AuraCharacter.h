@@ -24,6 +24,8 @@ public:
 	
 	AAuraCharacter();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
@@ -47,6 +49,9 @@ public:
 protected:
 	
 	virtual void InitAbilityActorInfo() override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Replicated)
+	bool bIsInShockLoop;
 
 private:
 	
