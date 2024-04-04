@@ -11,6 +11,8 @@ DECLARE_MULTICAST_DELEGATE(FOnAbilityGiven);
 DECLARE_DELEGATE_OneParam(FForEachAbility, const FGameplayAbilitySpec&);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnAbilityStatusTagChangeSignature, const FGameplayTag& /** AbilityTag */, const FGameplayTag& /** StatusTag */, const int32 /** AbilityLevel */);
 DECLARE_MULTICAST_DELEGATE_FourParams(FOnAbilityEquipped, const FGameplayTag& /** AbilityTag */, const FGameplayTag& /** StatusTag */, const FGameplayTag& /** InputTag */, const FGameplayTag& /** OldInputTag */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeactivatePassiveAbility, const FGameplayTag& /** AbilityTag */);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FActivatePassiveAbility, const FGameplayTag& /** AbilityTag */, bool /** bShouldActivate */);
 
 /**
  * 
@@ -28,6 +30,8 @@ public:
 	FOnAbilityGiven OnAbilityGivenDelegate;
 	FOnAbilityStatusTagChangeSignature OnAbilityStatusTagChangeDelegate;
 	FOnAbilityEquipped OnAbilityEquippedDelegate;
+	FDeactivatePassiveAbility DeactivatePassiveAbility;
+	FActivatePassiveAbility ActivatePassiveAbility;
 	void ExecuteDelegateForEachAbility(const FForEachAbility& Delegate);
 
 	bool bHasStartupAbilitiesGiven;
@@ -43,14 +47,19 @@ public:
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetAbilityStatusTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static bool HasAbilityInputTag(const FGameplayAbilitySpec* AbilitySpec, const FGameplayTag& InputTag);
+	static void RemoveInputTagByAbility(FGameplayAbilitySpec* AbilitySpec);
 
 	FGameplayAbilitySpec* GetAbilitySpecFromAbilityTag(const FGameplayTag& AbilityTag);
+	FGameplayAbilitySpec* GetAbilitySpecFromInputTag(const FGameplayTag& InputTag);
 	FGameplayTag GetStatusTagFromAbilityTag(const FGameplayTag& AbilityTag);
 	FGameplayTag GetInputTagFromAbilityTag(const FGameplayTag& AbilityTag);
 	bool GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutCurrentDesc, FString& OutNextLevelDesc);
 	void SetAbilityStatusTagsByLevel(const int32& InLevel);
+	bool IsSlotEmpty(const FGameplayTag& InputTag);
+	bool IsAbilityTypePassive(const FGameplayAbilitySpec& AbilitySpec) const;
 	
 	void SetAttributeValueByTag(const FGameplayTag& AttributeTag);
+	void RemoveInputTag(const FGameplayTag& InputTag);
 
 	UFUNCTION(Server, Reliable)
 	void ServerSetAttributeValueByTag(const FGameplayTag& AttributeTag);
@@ -61,12 +70,14 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerEquipAbility(const FGameplayTag& AbilityTag, const FGameplayTag& InputTag);
 
+	void UnequipAbility(const FGameplayTag& AbilityTag, const FGameplayTag& InputTag);
+
 	UFUNCTION(Client, Reliable)
 	void ClientEquipAbility(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, const FGameplayTag& InputTag, const FGameplayTag& OldInputTag);
 
-	void RemoveInputTagByAbility(FGameplayAbilitySpec* AbilitySpec);
-	void RemoveInputTag(const FGameplayTag& InputTag);
-	
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastActivatePassiveAbility(const FGameplayTag& AbilityTag, bool bShouldActivate);
+
 protected:
 
 	UFUNCTION(Client, Reliable)

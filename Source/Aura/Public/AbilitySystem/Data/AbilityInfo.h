@@ -23,6 +23,12 @@ struct FAuraAbilityInfo
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag AbilityTypeTag = FGameplayTag();
 
+	/**
+	 * @todo: this seems redundant, abilities only should have input tags on equipped spells. input tags are
+	 * dynamically given, i.e. any passive spell can have any one passive input tag at any time e.g. player equips
+	 * a passive spell.
+	 */
+	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag InputTag = FGameplayTag();
 

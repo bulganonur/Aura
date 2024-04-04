@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/Ability/Passive/PassiveSpellNiagara.h"
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
@@ -13,7 +14,7 @@
 
 AAuraCharacterBase::AAuraCharacterBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    // Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
@@ -30,6 +31,20 @@ AAuraCharacterBase::AAuraCharacterBase()
 	DebuffNiagaraComp->SetupAttachment(GetMesh());
 	DebuffNiagaraComp->DebuffTag = Debuff_Burn;
 
+	NiagaraAttachComp = CreateDefaultSubobject<USceneComponent>("NiagaraAttachComp");
+	NiagaraAttachComp->SetupAttachment(GetRootComponent());
+	NiagaraAttachComp->SetUsingAbsoluteRotation(true);
+	NiagaraAttachComp->SetWorldRotation(FRotator::ZeroRotator);
+
+	HaloOfProtectionNiagara = CreateDefaultSubobject<UPassiveSpellNiagara>("HaloOfProtectionNiagara");
+	HaloOfProtectionNiagara->SetupAttachment(NiagaraAttachComp);
+
+	LifeSiphonNiagara = CreateDefaultSubobject<UPassiveSpellNiagara>("LifeSiphonNiagara");
+	LifeSiphonNiagara->SetupAttachment(NiagaraAttachComp);
+
+	ManaSiphonNiagara = CreateDefaultSubobject<UPassiveSpellNiagara>("ManaSiphonNiagara");
+	ManaSiphonNiagara->SetupAttachment(NiagaraAttachComp);
+	
 	bIsDead = false;
 	MinionCount = 0;
 }

@@ -84,6 +84,10 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Fire_FireBolt, "Ability.Fire.FireBolt", "
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Lightning_Beam, "Ability.Lightning.Beam", "Beam Ability");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_HitReact, "Ability.HitReact", "HitReact Ability");
 
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Passive_HaloOfProtection, "Ability.Passive.HaloOfProtection", "Halo of Protection passive");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Passive_LifeSiphon, "Ability.Passive.LifeSiphon", "Life Siphon passive ability");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Passive_ManaSiphon, "Ability.Passive.ManaSiphon", "Mana Siphon passive ability");
+
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Status_Default, "Ability.Status.Default", "Default Ability Status, used to get parent tag via RequestDirectParent");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Status_Locked, "Ability.Status.Locked", "Locked Ability Status");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Status_Unlocked, "Ability.Status.Unlocked", "Unlocked Ability Status");
