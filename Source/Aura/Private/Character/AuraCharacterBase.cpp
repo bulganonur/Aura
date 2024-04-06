@@ -64,6 +64,13 @@ UAttributeSet* AAuraCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
+float AAuraCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	const float DamageTaken = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	OnDamageDelegate.Broadcast(DamageTaken);
+	return DamageTaken;
+}
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {
 	
@@ -173,9 +180,15 @@ FOnCombatActorsDeath& AAuraCharacterBase::GetOnCombatActorsDeathDelegate()
 	return OnCombatActorsDeathDelegate;
 }
 
+FOnDamageSignature& AAuraCharacterBase::GetOnDamageDelegate()
+{
+	return OnDamageDelegate;
+}
+
 void AAuraCharacterBase::SetMovementDisabled_Implementation()
 {
 	GetCharacterMovement()->DisableMovement();
+	
 }
 
 void AAuraCharacterBase::SetMovementEnabled_Implementation()

@@ -23,9 +23,10 @@ class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInte
 public:
 
 	AAuraCharacterBase();
-
+		
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet () const;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath(const FVector& DeathImpulse);
@@ -71,6 +72,7 @@ protected:
 	virtual void SetMinionCount_Implementation(const int32 Count) override;
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
 	virtual FOnCombatActorsDeath& GetOnCombatActorsDeathDelegate() override;
+	virtual FOnDamageSignature& GetOnDamageDelegate() override;
 	virtual void SetMovementDisabled_Implementation() override;
 	virtual void SetMovementEnabled_Implementation() override;
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
@@ -82,8 +84,10 @@ protected:
 
 	FOnASCRegistered OnAscRegisteredDelegate;
 	FOnCombatActorsDeath OnCombatActorsDeathDelegate;
+	FOnDamageSignature OnDamageDelegate;
 	
 	//~ End Combat Interface
+
 	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;

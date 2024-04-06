@@ -62,7 +62,7 @@ protected:
 	TObjectPtr<UAttributeSet> AttributeSet;
 
 private:
-
+	
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_XP)
 	int32 XP;
 	

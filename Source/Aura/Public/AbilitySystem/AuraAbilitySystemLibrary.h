@@ -75,6 +75,18 @@ public:
 	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary | GameplayEffects")
 	static FVector GetKnockbackForce (const FGameplayEffectContextHandle& GEContextHandle);
 
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary | GameplayEffects")
+	static bool IsRadialDamage(const FGameplayEffectContextHandle& GEContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary | GameplayEffects")
+	static float GetRadialDamageInnerRadius(const FGameplayEffectContextHandle& GEContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary | GameplayEffects")
+	static float GetRadialDamageOuterRadius(const FGameplayEffectContextHandle& GEContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary | GameplayEffects")
+	static FVector GetRadialDamageOrigin(const FGameplayEffectContextHandle& GEContextHandle);
+
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary | GameplayEffects")
 	static void SetIsBlockedHit(UPARAM(ref) FGameplayEffectContextHandle& GEContextHandle, const bool InIsBlockedHit);
 
@@ -101,6 +113,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary | GameplayEffects")
 	static void SetKnockbackForce(UPARAM(ref) FGameplayEffectContextHandle& GEContextHandle, const FVector& InKnockbackForce);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary | GameplayEffects")
+	static void SetIsRadialDamage(FGameplayEffectContextHandle& GEContextHandle, const bool InIsRadialDamage);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary | GameplayEffects")
+	static void SetRadialDamageInnerRadius(FGameplayEffectContextHandle& GEContextHandle, const float InRadialDamageInnerRadius);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary | GameplayEffects")
+	static void SetRadialDamageOuterRadius(FGameplayEffectContextHandle& GEContextHandle, const float InRadialDamageOuterRadius);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary | GameplayEffects")
+	static void SetRadialDamageOrigin(FGameplayEffectContextHandle& GEContextHandle, const FVector& InRadialDamageOrigin);
 
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary | GameplayMechanics")
 	static void GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, const FVector& SphereOrigin, float Radius);

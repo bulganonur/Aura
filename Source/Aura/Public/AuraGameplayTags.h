@@ -116,6 +116,7 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Attack);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Summon);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Fire_FireBolt);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Lightning_Beam);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Arcane_ArcaneShards);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_HitReact);
 
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Passive_HaloOfProtection);
@@ -157,6 +158,7 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(Montage_Attack_4);
 
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(CoolDown_Fire_FireBolt);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(CoolDown_Lightning_Beam);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(CoolDown_Arcane_ArcaneShards);
 
 /**
  * AuraGameplayTags

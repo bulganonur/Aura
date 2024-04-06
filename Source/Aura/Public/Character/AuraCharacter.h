@@ -37,6 +37,8 @@ public:
 	virtual int32 GetLevelByXP_Implementation(const int32 InXP) override;
 	virtual void AddToAttributePoints_Implementation(const int32 InPoints) override;
 	virtual void AddToSpellPoints_Implementation(const int32 InPoints) override;
+	virtual void ShowMagicCircle_Implementation() override;
+	virtual void HideMagicCircle_Implementation() override;
 	
 	//~ End Player Interface
 

@@ -40,4 +40,10 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void LevelUp(const int32 InLevel);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowMagicCircle();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void HideMagicCircle();
 };

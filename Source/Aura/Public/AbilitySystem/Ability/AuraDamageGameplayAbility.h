@@ -17,7 +17,8 @@ class AURA_API UAuraDamageGameplayAbility : public UAuraGameplayAbility
 
 protected:
 
-	FAuraDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
+	UFUNCTION(BlueprintCallable)
+	FAuraDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr, const FVector& DamageOrigin = FVector::ZeroVector) const;
 	
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* TargetActor);
@@ -54,5 +55,14 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "oomph")
 	float KnockbackForceMagnitude;
+
+	UPROPERTY(EditDefaultsOnly, Category = "RadialDamage")
+	bool bIsRadialDamage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RadialDamage")
+	float RadialDamageInnerRadius;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RadialDamage")
+	float RadialDamageOuterRadius;
 	
 };

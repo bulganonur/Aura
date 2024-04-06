@@ -82,6 +82,7 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Attack, "Ability.Attack", "Attack Ability
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Summon, "Ability.Summon", "Summon Ability");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Fire_FireBolt, "Ability.Fire.FireBolt", "FireBolt Ability");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Lightning_Beam, "Ability.Lightning.Beam", "Beam Ability");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Arcane_ArcaneShards, "Ability.Arcane.ArcaneShards", "ArcaneShards Ability");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_HitReact, "Ability.HitReact", "HitReact Ability");
 
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Passive_HaloOfProtection, "Ability.Passive.HaloOfProtection", "Halo of Protection passive");
@@ -114,6 +115,7 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Montage_Attack_4, "Montage.Attack.4", "Attack Mon
 // Cool Downs
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(CoolDown_Fire_FireBolt, "CoolDown.Fire.FireBolt", "FireBolt CoolDown Tag");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(CoolDown_Lightning_Beam, "CoolDown.Lightning.Beam", "Beam CoolDown Tag");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(CoolDown_Arcane_ArcaneShards, "CoolDown.Arcane.ArcaneShards", "ArcaneShards CoolDown Tag");
 
 FAuraGameplayTags FAuraGameplayTags::AuraGameplayTags;
 
