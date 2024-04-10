@@ -36,16 +36,11 @@ protected:
 	virtual void Destroyed() override;
 
 	UFUNCTION()
-	void OnSphereCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	virtual void OnSphereCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Components")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMoveComp;
 
-private:
-
-	UPROPERTY(EditDefaultsOnly)
-	float LifeSpan;
-	
 	UPROPERTY(EditDefaultsOnly, Category = "Components")
 	TObjectPtr<USphereComponent> SphereComp;
 
@@ -60,6 +55,11 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAudioComponent> OnAir_SFX;
+	
+private:
 
+	UPROPERTY(EditDefaultsOnly)
+	float LifeSpan;
+	
 	bool bHasServerHitHappened;
 };

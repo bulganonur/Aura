@@ -1,8 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Actor/AuraProjectile.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -73,8 +71,7 @@ void AAuraProjectile::Destroyed()
 	Super::Destroyed();
 }
 
-void AAuraProjectile::OnSphereCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AAuraProjectile::OnSphereCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor == GetInstigator()) { return; }
 	
